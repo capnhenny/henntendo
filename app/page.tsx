@@ -64,9 +64,10 @@ export default function Page() {
 
   return (
     <main className="container">
-      <h1 className="h1 title-font">Steam Showcase</h1>
+      <h1 className="h1 title-font">who's that steam player <img src="/shadow.png" alt="" className="h1-icon" />
+      </h1>
       <p className="subtle">
-        Paste a Steam vanity (e.g. <code>laserhenn</code>), SteamID64 (17 digits), or full profile URL.
+        Search by Steam Name, SteamID, or full profile URL below:
       </p>
 
       <div className="controls">
