@@ -158,7 +158,7 @@ a:hover{ text-decoration:underline }
   grid-auto-rows: var(--surf-size);
   gap: var(--surf-size);
   justify-content: center; align-content:start;
-  opacity: .12; filter: saturate(.9) contrast(1.05);
+  opacity: 0.18; filter: saturate(.9) contrast(1.05);
 }
 .surf{ width:var(--surf-size); height:var(--surf-size); display:grid; place-items:center }
 .surf > img{
@@ -190,3 +190,19 @@ body{ position: relative; }               /* create stacking context */
 body.theme-arcade::before{ z-index: 0; }  /* scanlines layer */
 .surf-bg{ z-index: 1; }                   /* surfers layer */
 .container{ z-index: 2; }                 /* content layer */
+
+/* Bigger surfers (2×) */
+:root{
+  --surf-size: clamp(144px, 20vw, 320px); /* was 72px,10vw,160px */
+}
+
+/* Lighter glass so background shows more */
+.panel{
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+  border-color: rgba(255,255,255,0.08);
+  backdrop-filter: blur(1.5px);
+}
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015));
+  border-color: rgba(255,255,255,0.08);
+}
