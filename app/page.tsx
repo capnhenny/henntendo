@@ -65,12 +65,21 @@ export default function Page() {
   return (
     <main className="container">
       <h1 className="h1 title-font">Steam Showcase</h1>
-      <p className="subtle">Paste a Steam vanity (e.g. <code>laserhenn</code>), SteamID64 (17 digits), or full profile URL.</p>
+      <p className="subtle">
+        Paste a Steam vanity (e.g. <code>laserhenn</code>), SteamID64 (17 digits), or full profile URL.
+      </p>
 
       <div className="controls">
-        <input className="input" placeholder="Steam vanity / SteamID64 / profile URL"
-          value={input} onChange={e=>setInput(e.target.value)} />
-        <button className="button" onClick={loadAll} disabled={loading}>{loading ? "Loading..." : "Show"}</button>
+        <input
+          className="input"
+          placeholder="Steam vanity / SteamID64 / profile URL"
+          value={input}
+          onChange={e=>setInput(e.target.value)}
+          onKeyDown={e=>{ if(e.key==="Enter") loadAll(); }}
+        />
+        <button className="button" onClick={loadAll} disabled={loading}>
+          {loading ? "Loading..." : "Show"}
+        </button>
       </div>
 
       {err && <p className="subtle" style={{ color:"#ff6b6b" }}>{err}</p>}
@@ -82,7 +91,7 @@ export default function Page() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={profile.avatarfull} alt="avatar" className="avatar" />
             <div>
-              <div className="title-font" style={{ fontSize: 22 }}>{profile.personaname}</div>
+              <div className="profile-name">{profile.personaname}</div>
               <div className="subtle">{profile.realname ?? ""}</div>
             </div>
           </div>
