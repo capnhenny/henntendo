@@ -15,6 +15,71 @@
   --accent:#35ffb4;
   --accent-2:#b15cff;
 }
+/* ===== Surfer background ===== */
+
+:root{
+  /* Tile size scales with page; tweak the middle value to taste */
+  --surf-size: clamp(72px, 10vw, 160px);
+  --surf-cols: 1; /* JS computes this at runtime */
+}
+
+/* Make sure your content sits above the bg */
+.container { position: relative; z-index: 1; }
+
+/* The tiled background layer */
+.surf-bg{
+  position: fixed; inset: 0;
+  z-index: 0;          /* body gradients are behind via background; content is above via z-index on .container */
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: repeat(var(--surf-cols), var(--surf-size));
+  grid-auto-rows: var(--surf-size);
+  gap: var(--surf-size);          /* spacing equals image size */
+  justify-content: center;
+  align-content: start;
+  opacity: 0.12;                  /* subtle */
+  filter: saturate(0.9) contrast(1.05);
+}
+
+/* Each tile */
+.surf{
+  width: var(--surf-size);
+  height: var(--surf-size);
+  display: grid;
+  place-items: center;
+}
+
+/* The surfer: discrete 45° ticks every 3s, infinite */
+.surf > img{
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  transform-origin: 50% 50%;
+  animation: spinSteps 24s steps(8, end) infinite;
+}
+
+@keyframes spinSteps {
+  from { transform: rotate(0deg); }     /* 0° for 3s */
+  to   { transform: rotate(360deg); }   /* then jumps 45° every 3s */
+}
+
+/* Kill bullets & left padding on lists */
+ul { list-style: none; padding-left: 0; margin: 0; }
+
+/* Staggered animation delays (still 3s per step, 24s per full spin) */
+.surf:nth-child(8n+1) > img { animation-delay: 0s; }
+.surf:nth-child(8n+2) > img { animation-delay: 3s; }
+.surf:nth-child(8n+3) > img { animation-delay: 6s; }
+.surf:nth-child(8n+4) > img { animation-delay: 9s; }
+.surf:nth-child(8n+5) > img { animation-delay: 12s; }
+.surf:nth-child(8n+6) > img { animation-delay: 15s; }
+.surf:nth-child(8n+7) > img { animation-delay: 18s; }
+.surf:nth-child(8n+8) > img { animation-delay: 21s; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .surf > img { animation: none !important; }
+}
 
 /* Baseline */
 *{box-sizing:border-box}
