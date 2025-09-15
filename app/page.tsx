@@ -56,11 +56,12 @@ export default function Page() {
       setLevel(l.level ?? null);
       setBadges(l.badges ?? []);
 
-      const top10: Game[] = (g.games ?? [])
-        .sort((a, b) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
-        .slice(0, 10);
+const top10: Game[] = (g.games ?? [])
+  .sort((a: Game, b: Game) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
+  .slice(0, 10);
 
-      setGames(top10);
+setGames(top10);
+
     } catch (e: any) {
       setErr(e.message || "Something went wrong");
     } finally {
