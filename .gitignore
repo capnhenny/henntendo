@@ -1,0 +1,19 @@
+# dependencies
+/node_modules
+
+# build output
+/.next
+/out
+
+# production
+/build
+
+# misc
+.DS_Store
+*.log
+
+# local env files (keep secrets safe!)
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
