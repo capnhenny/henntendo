@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 
 type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
-type Game = { appid: number; name: string; playtime_forever?: number };
+type Game = { appid: number; name: string; playtime_2weeks?: number; playtime_forever?: number };
+
 
 const DEFAULT_INPUT = "laserhenn";
 
