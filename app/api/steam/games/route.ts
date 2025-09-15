@@ -15,12 +15,13 @@ export async function GET(req: Request) {
 
   const r = await fetch(url, { next: { revalidate: 300 } }); // cache 5 min
   const j = await r.json();
-
+  
   const games = (j?.response?.games ?? []).map((g: any) => ({
     appid: g.appid,
     name: g.name,
     playtime_forever: g.playtime_forever ?? 0, // minutes
-  }));
+    img_icon_url: g.img_icon_url ?? "",       // <-- add this
+}));
 
   return NextResponse.json({ games, game_count: j?.response?.game_count ?? games.length });
 }
