@@ -59,13 +59,14 @@ export default function Page() {
       const top10: Game[] = (g.games ?? [])
         .sort((a, b) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
         .slice(0, 10);
+
       setGames(top10);
     } catch (e: any) {
       setErr(e.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
-  } // <-- missing brace added
+  } // <-- closes loadAll
 
   async function loadAchievements(appid: number) {
     if (!steamid) return;
@@ -76,9 +77,9 @@ export default function Page() {
       name: a.name,
       achieved: a.achieved,
       unlocktime: a.unlocktime,
-    })); // <-- needed an extra ) here
+    }));
     setAchievements(list);
-  }
+  } // <-- closes loadAchievements
 
   useEffect(() => {
     loadAll();
