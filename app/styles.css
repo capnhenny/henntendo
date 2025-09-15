@@ -41,11 +41,11 @@ body.theme-arcade::before{
 
 /* Typography helpers */
 .title-font-enabled .title-font,
-.title-font-enabled .h1,
-.title-font-enabled h2.section-title{
-  font-family: "Press Start 2P", system-ui, sans-serif !important;
-  letter-spacing:.5px;
-}
+.title-font-enabled /* Display font (Oxanium) for headings & anything with .title-font */
+.h1,
+h2.section-title,
+.title-font { font-family: var(--font-display), system-ui, sans-serif !important; }
+
 
 /* Layout */
 .container{ max-width:1100px; margin:0 auto; padding:28px; position:relative; z-index:1 }
@@ -65,6 +65,19 @@ body.theme-arcade::before{
     0 0 14px rgba(99,102,241,0.30),
     0 0 24px rgba(251,191,36,0.22);
 }
+
+/* Tiny footer logo that links to okhenn.com */
+.site-footer{
+  position: fixed; inset: auto 0 10px 0; /* bottom center */
+  display: grid; place-items: center; z-index: 2; pointer-events: none;
+}
+.site-footer a{ pointer-events: auto; }
+.footer-logo{
+  width: 28px; height: 28px; image-rendering: pixelated;
+  opacity: .8; transition: transform .12s ease, opacity .12s ease;
+  filter: drop-shadow(0 0 6px rgba(99,102,241,.35));
+}
+.footer-logo:hover{ transform: translateY(-1px) scale(1.05); opacity: 1; }
 
 /* Controls */
 .controls{ display:flex; gap:12px; margin:12px 0 22px }
