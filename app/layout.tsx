@@ -5,6 +5,23 @@ import "./styles.css";
 import SurfBG from "./SurfBG";
 import { VT323, Oxanium } from "next/font/google";
 
+import { VT323, Oxanium, Bebas_Neue } from "next/font/google";
+
+const bodyFont   = VT323({ subsets: ["latin"], weight: "400" });
+const displayFont = Oxanium({ subsets: ["latin"], weight: ["400","700"], variable: "--font-display" });
+const bebasFont   = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-bebas" });
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body className={`theme-arcade ${bodyFont.className} ${displayFont.variable} ${bebasFont.variable}`}>
+        {/* surfers etc */}
+        {children}
+      </body>
+    </html>
+  );
+}
+
 // Body font (CRT-ish)
 const bodyFont = VT323({ subsets: ["latin"], weight: "400" });
 
