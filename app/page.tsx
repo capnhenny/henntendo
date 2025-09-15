@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 
 type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
@@ -17,16 +18,19 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-const iconUrl = (appid: number, hash?: string) =>
-  hash ? `https://media.steampowered.com/steamcommunity/public/images/apps/${appid}/${hash}.jpg` : "";
-  
+  const iconUrl = (appid: number, hash?: string) =>
+    hash ? `https://media.steampowered.com/steamcommunity/public/images/apps/${appid}/${hash}.jpg` : "";
+
   async function resolveIfNeeded(value: string) {
     const trimmed = value.trim();
     const profilesMatch = trimmed.match(/steamcommunity\.com\/profiles\/(\d{17})/i);
     if (profilesMatch) return profilesMatch[1];
+
     const vanityUrlMatch = trimmed.match(/steamcommunity\.com\/id\/([^\/?#]+)/i);
     const candidate = vanityUrlMatch ? vanityUrlMatch[1] : trimmed;
+
     if (/^\d{17}$/.test(candidate)) return candidate;
+
     const r = await fetch(`/api/steam/resolve?vanity=${encodeURIComponent(candidate)}`);
     const data = await r.json();
     if (data.success !== 1 || !data.steamid) throw new Error("Could not resolve vanity URL");
@@ -43,9 +47,9 @@ const iconUrl = (appid: number, hash?: string) =>
       setSteamid(id);
 
       const [p, l, g] = await Promise.all([
-        fetch(`/api/steam/profile?steamid=${id}`).then(r => r.json()),
-        fetch(`/api/steam/level?steamid=${id}`).then(r => r.json()),
-        fetch(`/api/steam/games?steamid=${id}`).then(r => r.json()), // all-time playtime
+        fetch(`/api/steam/profile?steamid=${id}`).then((r) => r.json()),
+        fetch(`/api/steam/level?steamid=${id}`).then((r) => r.json()),
+        fetch(`/api/steam/games?steamid=${id}`).then((r) => r.json()),
       ]);
 
       setProfile(p);
@@ -69,72 +73,95 @@ const iconUrl = (appid: number, hash?: string) =>
     const r = await fetch(`/api/steam/achievements?steamid=${steamid}&appid=${appid}`);
     const data = await r.json();
     const list = (data.achievements ?? []).map((a: any) => ({
-      name: a.name, achieved: a.achieved, unlocktime: a.unlocktime
+      name: a.name,
+      achieved: a.achieved,
+      unlocktime: a.unlocktime,
     }));
     setAchievements(list);
   }
 
-  useEffect(() => { loadAll(); }, []);
+  useEffect(() => {
+    loadAll();
+  }, []);
 
-return (
-  <main className="container">
-    <div className="hero">
-      <h1 className="h1 title-font">
-        who&apos;s that steam player <img src="/shadow.png" alt="" className="h1-icon" />
-      </h1>
-      <p className="subtle">Search by Steam Name, SteamID, or full profile URL below:</p>
+  return (
+    <main className="container">
+      <div className="hero">
+        <h1 className="h1 title-font">
+          who&apos;s that steam player <img src="/shadow.png" alt="" className="h1-icon" />
+        </h1>
+        <p className="subtle">Search by Steam Name, SteamID, or full profile URL below:</p>
 
-      <div className="controls">
-        <input
-          className="input"
-          placeholder="Steam vanity / SteamID64 / profile URL"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") loadAll(); }}
-        />
-        <button className="button" onClick={loadAll} disabled={loading}>
-          {loading ? "Loading..." : "Show"}
-        </button>
+        <div className="controls">
+          <input
+            className="input"
+            placeholder="Steam vanity / SteamID64 / profile URL"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") loadAll();
+            }}
+          />
+          <button className="button" onClick={loadAll} disabled={loading}>
+            {loading ? "Loading..." : "Show"}
+          </button>
+        </div>
       </div>
-    </div>
 
-    {/* … profile + level panels … */}
-
-    <section className="grid-2 section">
-      <div className="panel">
-        <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-          Top 10 Games (all-time playtime)
-        </h2>
-
-        {!!games.length ? (
-          <div className="games-list">
-            {games.map((g) => {
-              const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
-              const icon = iconUrl(g.appid, g.img_icon_url);
-              return (
-                <div key={g.appid} className="card game-item">
-                  <div className="game-main">
-                    {icon && <img className="game-icon" src={icon} alt="" />}
-                    <div className="game-title">
-                      <div className="game-name">{g.name}</div>
-                      <div className="game-meta">{hrsAll} hrs total</div>
-                    </div>
-                  </div>
-                  <button className="button" onClick={() => loadAchievements(g.appid)}>
-                    See achievements
-                  </button>
-                </div>
-              );
-            })}
+      {profile && (
+        <section className="dashboard">
+          <div className="panel panel--profile">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={profile.avatarfull} alt="avatar" className="avatar" />
+            <div>
+              <div className="profile-name">{profile.personaname}</div>
+              <div className="subtle">{profile.realname ?? ""}</div>
+            </div>
           </div>
-        ) : (
-          <div className="subtle">No public games.</div>
-        )}
-      </div>
+          <div className="panel panel--level">
+            <div className="level-pill">
+              Level&nbsp;<strong>{level ?? "—"}</strong>
+            </div>
+          </div>
+        </section>
+      )}
 
-        {/* You can add a second panel here later for "Recently Played" if you introduce a separate recentGames state */}
+      <section className="grid-2 section">
         <div className="panel">
-          <h2 className="section-title title-font" style={{ fontSize: 16 }}>Badges</h2>
+          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+            Top 10 Games (all-time playtime)
+          </h2>
+
+          {!!games.length ? (
+            <div className="games-list">
+              {games.map((g) => {
+                const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
+                const icon = iconUrl(g.appid, g.img_icon_url);
+                return (
+                  <div key={g.appid} className="card game-item">
+                    <div className="game-main">
+                      {icon && <img className="game-icon" src={icon} alt="" />}
+                      <div className="game-title">
+                        <div className="game-name">{g.name}</div>
+                        <div className="game-meta">{hrsAll} hrs total</div>
+                      </div>
+                    </div>
+                    <button className="button" onClick={() => loadAchievements(g.appid)}>
+                      See achievements
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="subtle">No public games.</div>
+          )}
+        </div>
+
+        <div className="panel">
+          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+            Badges
+          </h2>
           {!!badges.length ? (
             <ul className="badges-grid">
               {badges.slice(0, 20).map((b, i) => (
