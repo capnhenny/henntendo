@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
 type Game = { appid: number; name: string; playtime_forever?: number };
 
-const DEFAULT_INPUT = "laserhenn"; // ✅ your vanity from https://steamcommunity.com/id/laserhenn/
+const DEFAULT_INPUT = "laserhenn";
 
 export default function Page() {
-  const [input, setInput] = useState(DEFAULT_INPUT); // prefill with your vanity
+  const [input, setInput] = useState(DEFAULT_INPUT);
   const [steamid, setSteamid] = useState("");
   const [profile, setProfile] = useState<any>(null);
   const [level, setLevel] = useState<number | null>(null);
@@ -18,22 +18,14 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  // Accepts vanity, SteamID64, or full profile URL
   async function resolveIfNeeded(value: string) {
     const trimmed = value.trim();
-
-    // Full /profiles/ URL → extract 17-digit id
     const profilesMatch = trimmed.match(/steamcommunity\.com\/profiles\/(\d{17})/i);
     if (profilesMatch) return profilesMatch[1];
-
-    // Full /id/ URL → extract vanity
     const vanityUrlMatch = trimmed.match(/steamcommunity\.com\/id\/([^\/?#]+)/i);
     const candidate = vanityUrlMatch ? vanityUrlMatch[1] : trimmed;
-
-    // Already a 17-digit id?
     if (/^\d{17}$/.test(candidate)) return candidate;
 
-    // Otherwise treat as vanity and resolve server-side
     const r = await fetch(`/api/steam/resolve?vanity=${encodeURIComponent(candidate)}`);
     const data = await r.json();
     if (data.success !== 1 || !data.steamid) throw new Error("Could not resolve vanity URL");
@@ -42,10 +34,7 @@ export default function Page() {
 
   async function loadAll() {
     try {
-      setErr(null);
-      setLoading(true);
-      setAchievements([]);
-
+      setErr(null); setLoading(true); setAchievements([]);
       const id = await resolveIfNeeded(input);
       setSteamid(id);
 
@@ -58,11 +47,10 @@ export default function Page() {
       setProfile(p);
       setLevel(l.level ?? null);
       setBadges(l.badges ?? []);
-
       const list: Game[] = (g.games ?? []).sort(
         (a: Game, b: Game) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0)
       );
-      setGames(list.slice(0, 50)); // top 50 by playtime
+      setGames(list.slice(0, 50));
     } catch (e: any) {
       setErr(e.message || "Something went wrong");
     } finally {
@@ -82,55 +70,51 @@ export default function Page() {
     setAchievements(list);
   }
 
-  // Auto-load your own profile on first visit
-  useEffect(() => {
-    loadAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => { loadAll(); /* auto-load */ }, []);
 
   return (
-    <main className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Steam Showcase</h1>
-      <p className="text-sm text-gray-600 mb-2">
+    <main className="container">
+      <h1 className="h1">Steam Showcase</h1>
+      <p className="subtle">
         Paste a Steam vanity (e.g. <code>laserhenn</code>), SteamID64 (17 digits), or full profile URL.
       </p>
 
-      <div className="flex gap-2 mb-4">
+      <div className="controls">
         <input
-          className="border rounded px-3 py-2 flex-1"
+          className="input"
           placeholder="Steam vanity / SteamID64 / profile URL"
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
-        <button className="rounded px-4 py-2 border" onClick={loadAll} disabled={loading}>
+        <button className="button" onClick={loadAll} disabled={loading}>
           {loading ? "Loading..." : "Show"}
         </button>
       </div>
 
-      {err && <p className="text-red-600 mb-4">{err}</p>}
+      {err && <p className="err">{err}</p>}
 
       {profile && (
-        <section className="mb-6">
-          <div className="flex items-center gap-3">
+        <section className="section">
+          <div className="profile">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={profile.avatarfull} alt="avatar" className="w-16 h-16 rounded" />
+            <img src={profile.avatarfull} alt="avatar" className="avatar" />
             <div>
-              <div className="font-semibold">{profile.personaname}</div>
-              <div className="text-sm text-gray-500">{profile.realname ?? ""}</div>
+              <div style={{ fontWeight: 600 }}>{profile.personaname}</div>
+              <div className="subtle">{profile.realname ?? ""}</div>
             </div>
           </div>
-          <div className="mt-2">
+          <div style={{ marginTop: 8 }}>
             Level: <strong>{level ?? "—"}</strong>
           </div>
         </section>
       )}
 
       {!!badges.length && (
-        <section className="mb-6">
-          <h2 className="font-semibold mb-2">Badges</h2>
-          <ul className="grid grid-cols-2 gap-2">
+        <section className="section">
+          <h2 className="section-title">Badges</h2>
+          <ul className="badges-grid">
             {badges.slice(0, 20).map((b, i) => (
-              <li key={i} className="border rounded p-2 text-sm">
+              <li key={i} className="card">
                 <div>Badge ID: {b.badgeid}</div>
                 {"level" in b && <div>Level: {b.level}</div>}
                 {"appid" in b && b.appid && <div>Game AppID: {b.appid}</div>}
@@ -141,28 +125,28 @@ export default function Page() {
       )}
 
       {!!games.length && (
-        <section className="mb-6">
-          <h2 className="font-semibold mb-2">Top Games (by playtime)</h2>
-          <ul className="space-y-2">
+        <section className="section">
+          <h2 className="section-title">Top Games (by playtime)</h2>
+          <div className="games-list">
             {games.map((g) => (
-              <li key={g.appid} className="border rounded p-2 flex items-center justify-between">
+              <div key={g.appid} className="card game-item">
                 <span>{g.name}</span>
-                <button className="border rounded px-3 py-1 text-sm" onClick={() => loadAchievements(g.appid)}>
+                <button className="button" onClick={() => loadAchievements(g.appid)}>
                   See achievements
                 </button>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </section>
       )}
 
       {!!achievements.length && (
-        <section className="mb-6">
-          <h2 className="font-semibold mb-2">Achievements</h2>
-          <ul className="grid grid-cols-2 gap-2">
+        <section className="section">
+          <h2 className="section-title">Achievements</h2>
+          <ul className="achievements-grid">
             {achievements.map((a, i) => (
-              <li key={i} className="border rounded p-2 text-sm">
-                <div className="font-medium">{a.name}</div>
+              <li key={i} className="card">
+                <div style={{ fontWeight: 500 }}>{a.name}</div>
                 <div>{a.achieved ? "Unlocked" : "Locked"}</div>
               </li>
             ))}
