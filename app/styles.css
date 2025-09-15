@@ -1,6 +1,6 @@
 /* ============  Retro Arcade (Amber + Indigo)  ============ */
 
-/* Tokens (single source of truth) */
+/* Tokens */
 :root{
   /* Base */
   --bg-0:#0b0f12;
@@ -11,27 +11,28 @@
   --border: rgba(255,255,255,0.12);
 
   /* Accents */
-  --accent:   #fbbf24; /* amber-400 */
-  --accent-2: #6366f1; /* indigo-500 */
+  --accent:#fbbf24;     /* amber-400 */
+  --accent-2:#6366f1;   /* indigo-500 */
 
-  /* Surfer tiling */
-  --surf-size: clamp(72px, 10vw, 160px);
+  /* Fonts (from layout.tsx next/font variables) */
+  /* --font-display = Oxanium, --font-bebas = Bebas Neue */
+
+  /* Surfer tiling (2x bigger) */
+  --surf-size: clamp(144px, 20vw, 320px);
   --surf-cols: 1; /* set by JS */
 }
 
-/* Baseline */
+/* Baseline & background */
 *{ box-sizing:border-box }
 html,body{ margin:0; padding:0 }
 body{
   color:var(--text);
   line-height:1.6;
-  /* Amber + Indigo background */
   background:
     radial-gradient(1200px 600px at 18% -10%, rgba(99,102,241,0.28) 0%, transparent 42%),
     radial-gradient(900px 520px at 82% 112%, rgba(251,191,36,0.24) 0%, transparent 42%),
     linear-gradient(180deg, var(--bg-1), var(--bg-0));
 }
-/* CRT scanlines */
 body.theme-arcade::before{
   content:""; position:fixed; inset:0; pointer-events:none;
   background: repeating-linear-gradient(to bottom,
@@ -39,16 +40,14 @@ body.theme-arcade::before{
   mix-blend-mode: overlay; opacity:.25;
 }
 
-/* Typography helpers: display font for headings & .title-font */
-.h1,
-h2.section-title,
-.title-font{
+/* Typography */
+.h1, h2.section-title, .title-font{
   font-family: var(--font-display), system-ui, sans-serif !important;
 }
 .profile-name{ font-weight:700; font-size:22px; letter-spacing:.2px; }
 
 /* Layout */
-.container{ max-width:1100px; margin:0 auto; padding:28px; position:relative; z-index:1 }
+.container{ max-width:1100px; margin:0 auto; padding:28px; position:relative; z-index:2 }
 .section{ margin:28px 0 }
 .section-title{ font-weight:700; margin:0 0 12px; position:relative; padding-bottom:6px }
 .section-title::after{
@@ -65,19 +64,17 @@ h2.section-title,
     0 0 14px rgba(99,102,241,0.30),
     0 0 24px rgba(251,191,36,0.22);
 }
+.h1-icon{
+  width:42px; height:auto; margin-left:10px;
+  image-rendering:pixelated; vertical-align:middle;
+  filter: drop-shadow(0 0 10px rgba(99,102,241,.35));
+}
 
-/* Tiny footer logo that links to okhenn.com */
-.site-footer{
-  position: fixed; inset: auto 0 10px 0; /* bottom center */
-  display: grid; place-items: center; z-index: 2; pointer-events: none;
-}
-.site-footer a{ pointer-events: auto; }
-.footer-logo{
-  width: 28px; height: 28px; image-rendering: pixelated;
-  opacity: .8; transition: transform .12s ease, opacity .12s ease;
-  filter: drop-shadow(0 0 6px rgba(99,102,241,.35));
-}
-.footer-logo:hover{ transform: translateY(-1px) scale(1.05); opacity: 1; }
+/* Center the hero (title + subtitle + search) */
+.hero{ text-align:center; margin-bottom:16px }
+.hero .h1{ display:inline-block }
+.hero .controls{ justify-content:center }
+.hero .input{ max-width:720px }
 
 /* Controls */
 .controls{ display:flex; gap:12px; margin:12px 0 22px }
@@ -105,11 +102,11 @@ h2.section-title,
 .button:hover{ transform:translateY(-1px); filter:brightness(1.06) }
 .button:disabled{ opacity:.6; transform:none }
 
-/* Panels */
+/* Panels (lighter glass so surfers show through) */
 .panel{
-  background: linear-gradient(180deg, var(--glass), rgba(255,255,255,0.03));
-  border:1px solid var(--border);
-  border-radius:16px; padding:14px; backdrop-filter: blur(2px);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px; padding:14px; backdrop-filter: blur(1.5px);
   box-shadow: 0 0 22px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.03);
 }
 .panel--profile{ display:flex; gap:14px; align-items:center }
@@ -131,8 +128,9 @@ h2.section-title,
 
 /* Cards */
 .card{
-  border:1px solid var(--border); border-radius:14px; padding:12px;
-  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px; padding:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
   transition: box-shadow .15s ease, transform .12s ease;
 }
 .card:hover{
@@ -140,11 +138,28 @@ h2.section-title,
   box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 18%, transparent),
               inset 0 1px 0 rgba(255,255,255,.04);
 }
-.badges-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px }
-.games-list{ display:flex; flex-direction:column; gap:12px }
-.game-item{ display:flex; justify-content:space-between; align-items:center }
 
-/* Text */
+/* Game list (title + hours stacked, with icon) */
+.games-list{ display:flex; flex-direction:column; gap:12px }
+.game-item{ display:flex; justify-content:space-between; align-items:center; gap:12px }
+.game-main{ display:flex; align-items:center; gap:12px }
+
+.game-icon{
+  width:32px; height:32px; border-radius:6px;
+  image-rendering:pixelated;
+  border:1px solid var(--border);
+  background:#000;
+}
+
+.game-title{ display:flex; flex-direction:column; line-height:1.1 }
+.game-name{
+  font-family: var(--font-bebas), system-ui, sans-serif;
+  font-size:24px; letter-spacing:.5px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;  /* one line */
+}
+.game-meta{ color:var(--muted); font-size:.95rem }
+
+/* Text / links / lists */
 .subtle{ color:var(--muted); font-size:.95rem }
 ul{ list-style:none; padding-left:0; margin:0 }
 a{ color:var(--accent-2); text-decoration:none }
@@ -152,21 +167,21 @@ a:hover{ text-decoration:underline }
 
 /* Surfer background (tiled, 45° ticks every 3s) */
 .surf-bg{
-  position: fixed; inset: 0; z-index:0; pointer-events:none;
+  position: fixed; inset: 0; z-index:1; pointer-events:none;
   display: grid;
   grid-template-columns: repeat(var(--surf-cols), var(--surf-size));
   grid-auto-rows: var(--surf-size);
   gap: var(--surf-size);
-  justify-content: center; align-content:start;
-  opacity: 0.18; filter: saturate(.9) contrast(1.05);
+  justify-content:center; align-content:start;
+  opacity:.18; filter: saturate(.9) contrast(1.05);
 }
 .surf{ width:var(--surf-size); height:var(--surf-size); display:grid; place-items:center }
 .surf > img{
-  width:100%; height:auto; image-rendering:-moz-crisp-edges; image-rendering:pixelated;
+  width:100%; height:auto;
+  image-rendering:-moz-crisp-edges; image-rendering:pixelated;
   transform-origin:50% 50%; animation: spinSteps 24s steps(8,end) infinite;
 }
 @keyframes spinSteps{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
-/* Staggered delays so tiles aren't in sync */
 .surf:nth-child(8n+1) > img { animation-delay: 0s }
 .surf:nth-child(8n+2) > img { animation-delay: 3s }
 .surf:nth-child(8n+3) > img { animation-delay: 6s }
@@ -179,35 +194,27 @@ a:hover{ text-decoration:underline }
   .surf > img{ animation:none !important }
 }
 
+/* Footer logo */
+.site-footer{
+  position: fixed; inset: auto 0 10px 0; display:grid; place-items:center;
+  z-index: 2; pointer-events:none;
+}
+.site-footer a{ pointer-events:auto }
+.footer-logo{
+  width:28px; height:28px; image-rendering:pixelated;
+  opacity:.8; transition: transform .12s, opacity .12s;
+  filter: drop-shadow(0 0 6px rgba(99,102,241,.35));
+}
+.footer-logo:hover{ transform: translateY(-1px) scale(1.05); opacity:1 }
+
+/* Layering: scanlines behind surfers, content above both */
+body{ position:relative }
+body.theme-arcade::before{ z-index:0 }
+.surf-bg{ z-index:1 }
+.container{ z-index:2 }
+
 /* Small screens */
 @media (max-width:820px){
   .dashboard{ grid-template-columns:1fr }
   .grid-2{ grid-template-columns:1fr }
-}
-
-/* Layering: scanlines behind surfers, content above both */
-body{ position: relative; }               /* create stacking context */
-body.theme-arcade::before{ z-index: 0; }  /* scanlines layer */
-.surf-bg{ z-index: 1; }                   /* surfers layer */
-.container{ z-index: 2; }                 /* content layer */
-
-/* Bigger surfers (2×) */
-:root{
-  --surf-size: clamp(144px, 20vw, 320px); /* was 72px,10vw,160px */
-}
-
-/* Lighter glass so background shows more */
-.panel{
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-  border-color: rgba(255,255,255,0.08);
-  backdrop-filter: blur(1.5px);
-}
-.card{
-  background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015));
-  border-color: rgba(255,255,255,0.08);
-}
-.h1-icon{
-  width: 42px; height: auto; margin-left: 10px;
-  image-rendering: pixelated; vertical-align: middle;
-  filter: drop-shadow(0 0 10px rgba(99,102,241,.35));
 }
