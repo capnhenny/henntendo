@@ -206,3 +206,8 @@ body.theme-arcade::before{ z-index: 0; }  /* scanlines layer */
   background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015));
   border-color: rgba(255,255,255,0.08);
 }
+.h1-icon{
+  width: 42px; height: auto; margin-left: 10px;
+  image-rendering: pixelated; vertical-align: middle;
+  filter: drop-shadow(0 0 10px rgba(99,102,241,.35));
+}
