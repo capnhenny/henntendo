@@ -127,57 +127,50 @@ export default function Page() {
         </section>
       )}
 
-      <section className="grid-2 section">
-        <div className="panel">
-          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-            Top 10 Games (all-time playtime)
-          </h2>
+<section className="grid-2 section">
+  <div className="panel">
+    <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+      Top 10 Games (all-time playtime)
+    </h2>
 
-          {!!games.length ? (
-            <div className="games-list">
-              {games.map((g) => {
-                const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
-                const icon = iconUrl(g.appid, g.img_icon_url);
-                return (
-                  <div key={g.appid} className="card game-item">
-                    <div className="game-main">
-                      {icon && <img className="game-icon" src={icon} alt="" />}
-                      <div className="game-title">
-                        <div className="game-name">{g.name}</div>
-                        <div className="game-meta">{hrsAll} hrs total</div>
-                      </div>
-                    </div>
-                    <button className="button" onClick={() => loadAchievements(g.appid)}>
-                      See achievements
-                    </button>
-                  </div>
-                );
-              })}
+    <div className="games-list">
+      {games.map((g) => {
+        const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
+        return (
+          <div key={g.appid} className="card game-item">
+            <div className="game-title">
+              <span>{g.name}</span>
+              <span className="game-meta">{hrsAll} hrs total</span>
             </div>
-          ) : (
-            <div className="subtle">No public games.</div>
-          )}
-        </div>
+            <button className="button" onClick={() => loadAchievements(g.appid)}>
+              See achievements
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  </div> {/* ✅ CLOSE the first panel */}
 
-        <div className="panel">
-          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-            Badges
-          </h2>
-          {!!badges.length ? (
-            <ul className="badges-grid">
-              {badges.slice(0, 20).map((b, i) => (
-                <li key={i} className="card">
-                  <div>Badge ID: {b.badgeid}</div>
-                  {"level" in b && b.level != null && <div>Level: {b.level}</div>}
-                  {"appid" in b && b.appid && <div>Game AppID: {b.appid}</div>}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="subtle">No badges found.</div>
-          )}
-        </div>
-      </section>
+  <div className="panel">
+    <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+      Recently Played (last 2 weeks)
+    </h2>
+    {!!games.length ? (
+      <div className="games-list">
+        {games.map((g) => (
+          <div key={g.appid} className="card game-item">
+            <span>{g.name}</span>
+            <button className="button" onClick={() => loadAchievements(g.appid)}>
+              See achievements
+            </button>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="subtle">No public games.</div>
+    )}
+  </div>
+</section>
 
       {!!achievements.length && (
         <section className="section panel">
