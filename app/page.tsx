@@ -2,8 +2,7 @@
 import { useEffect, useState } from "react";
 
 type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
-type Game = { appid: number; name: string; playtime_2weeks?: number; playtime_forever?: number };
-
+type Game = { appid: number; name: string; playtime_forever?: number };
 
 const DEFAULT_INPUT = "laserhenn";
 
@@ -33,26 +32,28 @@ export default function Page() {
 
   async function loadAll() {
     try {
-      setErr(null); setLoading(true); setAchievements([]);
+      setErr(null);
+      setLoading(true);
+      setAchievements([]);
+
       const id = await resolveIfNeeded(input);
       setSteamid(id);
-        const [p, l, g] = await Promise.all([
-          fetch(`/api/steam/profile?steamid=${id}`).then(r => r.json()),
-          fetch(`/api/steam/level?steamid=${id}`).then(r => r.json()),
-          fetch(`/api/steam/games?steamid=${id}`).then(r => r.json()),
-        ]);
-        
-        setProfile(p);
-        setLevel(l.level ?? null);
-        setBadges(l.badges ?? []);
-        
-        const top10: Game[] = (g.games ?? [])
-          .sort((a: Game, b: Game) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
-          .slice(0, 10);
-        
-        setGames(top10);
 
-    } catch (e:any) {
+      const [p, l, g] = await Promise.all([
+        fetch(`/api/steam/profile?steamid=${id}`).then(r => r.json()),
+        fetch(`/api/steam/level?steamid=${id}`).then(r => r.json()),
+        fetch(`/api/steam/games?steamid=${id}`).then(r => r.json()), // all-time playtime
+      ]);
+
+      setProfile(p);
+      setLevel(l.level ?? null);
+      setBadges(l.badges ?? []);
+
+      const top10: Game[] = (g.games ?? [])
+        .sort((a, b) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
+        .slice(0, 10);
+      setGames(top10);
+    } catch (e: any) {
       setErr(e.message || "Something went wrong");
     } finally {
       setLoading(false);
@@ -60,39 +61,41 @@ export default function Page() {
   }
 
   async function loadAchievements(appid: number) {
+    if (!steamid) return;
     setAchievements([]);
     const r = await fetch(`/api/steam/achievements?steamid=${steamid}&appid=${appid}`);
     const data = await r.json();
-    const list = (data.achievements ?? []).map((a:any)=>({ name:a.name, achieved:a.achieved, unlocktime:a.unlocktime }));
+    const list = (data.achievements ?? []).map((a: any) => ({
+      name: a.name, achieved: a.achieved, unlocktime: a.unlocktime
+    }));
     setAchievements(list);
   }
 
-  useEffect(()=>{ loadAll(); },[]);
+  useEffect(() => { loadAll(); }, []);
 
   return (
     <main className="container">
-      <h1 className="h1 title-font">who's that steam player <img src="/shadow.png" alt="" className="h1-icon" />
+      <h1 className="h1 title-font">
+        who's that steam player <img src="/shadow.png" alt="" className="h1-icon" />
       </h1>
-      <p className="subtle">
-        Search by Steam Name, SteamID, or full profile URL below:
-      </p>
+
+      <p className="subtle">Search by Steam Name, SteamID, or full profile URL below:</p>
 
       <div className="controls">
         <input
           className="input"
           placeholder="Steam vanity / SteamID64 / profile URL"
           value={input}
-          onChange={e=>setInput(e.target.value)}
-          onKeyDown={e=>{ if(e.key==="Enter") loadAll(); }}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") loadAll(); }}
         />
         <button className="button" onClick={loadAll} disabled={loading}>
           {loading ? "Loading..." : "Show"}
         </button>
       </div>
 
-      {err && <p className="subtle" style={{ color:"#ff6b6b" }}>{err}</p>}
+      {err && <p className="subtle" style={{ color: "#ff6b6b" }}>{err}</p>}
 
-      {/* Profile row: left = profile panel, right = level panel */}
       {profile && (
         <section className="dashboard">
           <div className="panel panel--profile">
@@ -103,20 +106,20 @@ export default function Page() {
               <div className="subtle">{profile.realname ?? ""}</div>
             </div>
           </div>
+
           <div className="panel panel--level">
             <div className="level-pill">Level&nbsp;<strong>{level ?? "—"}</strong></div>
           </div>
         </section>
       )}
 
-      {/* Row: Badges (left) and Games (right) */}
       <section className="grid-2 section">
         <div className="panel">
-          
-            <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-              Top 10 Games (all-time playtime)
-            </h2>
-            
+          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+            Top 10 Games (all-time playtime)
+          </h2>
+
+          {!!games.length ? (
             <div className="games-list">
               {games.map((g) => {
                 const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
@@ -133,21 +136,27 @@ export default function Page() {
                 );
               })}
             </div>
+          ) : (
+            <div className="subtle">No public games.</div>
+          )}
+        </div>
 
+        {/* You can add a second panel here later for "Recently Played" if you introduce a separate recentGames state */}
         <div className="panel">
-            <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-              Recently Played (last 2 weeks)
-            </h2>
-          {!!games.length ? (
-            <div className="games-list">
-              {games.map((g)=>(
-                <div key={g.appid} className="card game-item">
-                  <span>{g.name}</span>
-                  <button className="button" onClick={()=>loadAchievements(g.appid)}>See achievements</button>
-                </div>
+          <h2 className="section-title title-font" style={{ fontSize: 16 }}>Badges</h2>
+          {!!badges.length ? (
+            <ul className="badges-grid">
+              {badges.slice(0, 20).map((b, i) => (
+                <li key={i} className="card">
+                  <div>Badge ID: {b.badgeid}</div>
+                  {"level" in b && b.level != null && <div>Level: {b.level}</div>}
+                  {"appid" in b && b.appid && <div>Game AppID: {b.appid}</div>}
+                </li>
               ))}
-            </div>
-          ) : <div className="subtle">No public games.</div>}
+            </ul>
+          ) : (
+            <div className="subtle">No badges found.</div>
+          )}
         </div>
       </section>
 
@@ -155,7 +164,7 @@ export default function Page() {
         <section className="section panel">
           <h2 className="section-title title-font" style={{ fontSize: 16 }}>Achievements</h2>
           <ul className="badges-grid">
-            {achievements.map((a,i)=>(
+            {achievements.map((a, i) => (
               <li key={i} className="card">
                 <div style={{ fontWeight: 600 }}>{a.name}</div>
                 <div>{a.achieved ? "Unlocked" : "Locked"}</div>
