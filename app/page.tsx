@@ -80,9 +80,7 @@ export default function Page() {
     setAchievements(list);
   }
 
-  useEffect(() => {
-    loadAll();
-  }, []);
+useEffect(() => { loadAll(); }, []);
 
   return (
     <main className="container">
