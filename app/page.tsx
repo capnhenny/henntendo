@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
 type Game = { appid: number; name: string; playtime_forever?: number; img_icon_url?: string };
@@ -80,7 +80,10 @@ export default function Page() {
     setAchievements(list);
   }
 
-useEffect(() => { loadAll(); }, []);
+  // IMPORTANT: make sure this arrow is ASCII => (not ⇒)
+  useEffect(() => {
+    loadAll();
+  }, []);
 
   return (
     <main className="container">
