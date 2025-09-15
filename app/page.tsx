@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
 type Game = { appid: number; name: string; playtime_forever?: number; img_icon_url?: string };
@@ -159,9 +159,7 @@ export default function Page() {
         </div>
 
         <div className="panel">
-          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-            Badges
-          </h2>
+          <h2 className="section-title title-font" style={{ fontSize: 16 }}>Badges</h2>
           {!!badges.length ? (
             <ul className="badges-grid">
               {badges.slice(0, 20).map((b, i) => (
