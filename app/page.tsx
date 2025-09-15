@@ -65,6 +65,7 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
+  } // <-- missing brace added
 
   async function loadAchievements(appid: number) {
     if (!steamid) return;
@@ -75,11 +76,10 @@ export default function Page() {
       name: a.name,
       achieved: a.achieved,
       unlocktime: a.unlocktime,
-    });
+    })); // <-- needed an extra ) here
     setAchievements(list);
   }
 
-  // IMPORTANT: make sure this arrow is ASCII => (not ⇒)
   useEffect(() => {
     loadAll();
   }, []);
@@ -159,7 +159,9 @@ export default function Page() {
         </div>
 
         <div className="panel">
-          <h2 className="section-title title-font" style={{ fontSize: 16 }}>Badges</h2>
+          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+            Badges
+          </h2>
           {!!badges.length ? (
             <ul className="badges-grid">
               {badges.slice(0, 20).map((b, i) => (
@@ -178,7 +180,9 @@ export default function Page() {
 
       {!!achievements.length && (
         <section className="section panel">
-          <h2 className="section-title title-font" style={{ fontSize: 16 }}>Achievements</h2>
+          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+            Achievements
+          </h2>
           <ul className="badges-grid">
             {achievements.map((a, i) => (
               <li key={i} className="card">
