@@ -1,0 +1,41 @@
+/* Global reset-ish */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #111;
+  background: #fff;
+  line-height: 1.6;
+}
+
+/* Layout */
+.container { max-width: 900px; margin: 0 auto; padding: 24px; }
+.section { margin-bottom: 28px; }
+.section-title { font-weight: 600; margin: 0 0 10px; }
+
+/* Typography */
+.h1 { font-size: 2rem; font-weight: 800; margin: 0 0 14px; }
+.subtle { font-size: 0.9rem; color: #666; margin: 0 0 8px; }
+
+/* Controls */
+.controls { display: flex; gap: 10px; margin: 0 0 16px; }
+.input {
+  flex: 1; padding: 10px 12px; border: 1px solid #ddd; border-radius: 10px;
+}
+.button {
+  padding: 10px 14px; border: 1px solid #ddd; border-radius: 10px;
+  background: #f7f7f7; cursor: pointer;
+}
+.button:disabled { opacity: 0.6; cursor: default; }
+
+/* Content blocks */
+.profile { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 64px; height: 64px; border-radius: 8px; }
+
+.card { border: 1px solid #e5e5e5; border-radius: 12px; padding: 10px; font-size: 0.95rem; }
+.badges-grid, .achievements-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+}
+.games-list { display: flex; flex-direction: column; gap: 10px; }
+.game-item { display: flex; align-items: center; justify-content: space-between; }
+.err { color: #b00020; margin: 0 0 12px; }
