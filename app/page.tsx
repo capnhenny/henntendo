@@ -65,7 +65,6 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }
 
   async function loadAchievements(appid: number) {
     if (!steamid) return;
@@ -76,7 +75,7 @@ export default function Page() {
       name: a.name,
       achieved: a.achieved,
       unlocktime: a.unlocktime,
-    }));
+    });
     setAchievements(list);
   }
 
