@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
-type Game = { appid: number; name: string; playtime_forever?: number };
+type Game = { appid: number; name: string; playtime_forever?: number; img_icon_url?: string };
 
 const DEFAULT_INPUT = "laserhenn";
 
@@ -17,6 +17,9 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
+const iconUrl = (appid: number, hash?: string) =>
+  hash ? `https://media.steampowered.com/steamcommunity/public/images/apps/${appid}/${hash}.jpg` : "";
+  
   async function resolveIfNeeded(value: string) {
     const trimmed = value.trim();
     const profilesMatch = trimmed.match(/steamcommunity\.com\/profiles\/(\d{17})/i);
@@ -73,12 +76,12 @@ export default function Page() {
 
   useEffect(() => { loadAll(); }, []);
 
-  return (
-    <main className="container">
+return (
+  <main className="container">
+    <div className="hero">
       <h1 className="h1 title-font">
-        who's that steam player <img src="/shadow.png" alt="" className="h1-icon" />
+        who&apos;s that steam player <img src="/shadow.png" alt="" className="h1-icon" />
       </h1>
-
       <p className="subtle">Search by Steam Name, SteamID, or full profile URL below:</p>
 
       <div className="controls">
@@ -93,53 +96,41 @@ export default function Page() {
           {loading ? "Loading..." : "Show"}
         </button>
       </div>
+    </div>
 
-      {err && <p className="subtle" style={{ color: "#ff6b6b" }}>{err}</p>}
+    {/* … profile + level panels … */}
 
-      {profile && (
-        <section className="dashboard">
-          <div className="panel panel--profile">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={profile.avatarfull} alt="avatar" className="avatar" />
-            <div>
-              <div className="profile-name">{profile.personaname}</div>
-              <div className="subtle">{profile.realname ?? ""}</div>
-            </div>
-          </div>
+    <section className="grid-2 section">
+      <div className="panel">
+        <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+          Top 10 Games (all-time playtime)
+        </h2>
 
-          <div className="panel panel--level">
-            <div className="level-pill">Level&nbsp;<strong>{level ?? "—"}</strong></div>
-          </div>
-        </section>
-      )}
-
-      <section className="grid-2 section">
-        <div className="panel">
-          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-            Top 10 Games (all-time playtime)
-          </h2>
-
-          {!!games.length ? (
-            <div className="games-list">
-              {games.map((g) => {
-                const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
-                return (
-                  <div key={g.appid} className="card game-item">
+        {!!games.length ? (
+          <div className="games-list">
+            {games.map((g) => {
+              const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
+              const icon = iconUrl(g.appid, g.img_icon_url);
+              return (
+                <div key={g.appid} className="card game-item">
+                  <div className="game-main">
+                    {icon && <img className="game-icon" src={icon} alt="" />}
                     <div className="game-title">
-                      <span>{g.name}</span>
-                      <span className="game-meta">{hrsAll} hrs total</span>
+                      <div className="game-name">{g.name}</div>
+                      <div className="game-meta">{hrsAll} hrs total</div>
                     </div>
-                    <button className="button" onClick={() => loadAchievements(g.appid)}>
-                      See achievements
-                    </button>
                   </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="subtle">No public games.</div>
-          )}
-        </div>
+                  <button className="button" onClick={() => loadAchievements(g.appid)}>
+                    See achievements
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="subtle">No public games.</div>
+        )}
+      </div>
 
         {/* You can add a second panel here later for "Recently Played" if you introduce a separate recentGames state */}
         <div className="panel">
