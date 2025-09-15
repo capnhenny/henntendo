@@ -93,21 +93,21 @@ export default function Page() {
 
       {err && <p className="err">{err}</p>}
 
-      {profile && (
-        <section className="section">
-          <div className="profile">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={profile.avatarfull} alt="avatar" className="avatar" />
-            <div>
-              <div style={{ fontWeight: 600 }}>{profile.personaname}</div>
-              <div className="subtle">{profile.realname ?? ""}</div>
-            </div>
-          </div>
-          <div style={{ marginTop: 8 }}>
-            Level: <strong>{level ?? "—"}</strong>
-          </div>
-        </section>
-      )}
+{profile && (
+  <section className="section">
+    <div className="profile">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={profile.avatarfull} alt="avatar" className="avatar" />
+      <div>
+        <div style={{ fontWeight: 700, fontSize: 22 }}>{profile.personaname}</div>
+        <div className="subtle">{profile.realname ?? ""}</div>
+        <div style={{ marginTop: 6 }}>
+          <span className="level-pill">Level <strong>{level ?? "—"}</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
 
       {!!badges.length && (
         <section className="section">
