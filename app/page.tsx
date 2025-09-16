@@ -90,7 +90,7 @@ setGames(top10);
     <main className="container">
       <div className="hero">
         <h1 className="h1 title-font">
-          who&apos;s that steam player <img src="/shadow.png" alt="" className="h1-icon" />
+          Who's That Bud Buddy? <img src="/shadow.png" alt="" className="h1-icon" />
         </h1>
         <p className="subtle">Search by Steam Name, SteamID, or full profile URL below:</p>
 
