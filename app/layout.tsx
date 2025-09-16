@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      {/* expose next/font vars on <body> so CSS can use --font-display and --font-bebas */}
       <body className={`theme-arcade ${bodyFont.className} ${displayFont.variable} ${bebasFont.variable}`}>
         {children}
 
