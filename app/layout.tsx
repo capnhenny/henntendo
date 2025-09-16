@@ -9,6 +9,19 @@ import { VT323, Oxanium, Bebas_Neue } from "next/font/google";
 const bodyFont    = VT323({ subsets: ["latin"], weight: "400" });
 const displayFont = Oxanium({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-display" });
 const bebasFont   = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-bebas" });
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+
 
 // Metadata (optional icons block included)
 export const metadata: Metadata = {
