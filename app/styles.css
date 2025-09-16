@@ -268,8 +268,12 @@ body.theme-arcade::before{ z-index:0 }
   .dashboard{ grid-template-columns:1fr }
   .grid-2{ grid-template-columns:1fr }
 }
+/* app/styles.css */
 :root{
-  /* …existing tokens… */
-  /* use the next/font CSS var that layout.tsx exposes */
   --game-title-font: var(--font-bebas), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.game-name{
+  font-family: var(--game-title-font) !important;
+  font-weight: 400;
 }
