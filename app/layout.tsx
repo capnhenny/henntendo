@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import "./styles.css";
 
 import { VT323, Oxanium, Bebas_Neue } from "next/font/google";
-import SurfBG from "./components/SurfBG"; // adjust path if your component lives elsewhere
 
 const bodyFont    = VT323({ subsets: ["latin"], weight: "400" });
 const displayFont = Oxanium({ subsets: ["latin"], weight: ["400","700"], variable: "--font-display" });
@@ -25,12 +24,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      {/* body font + expose CSS variables for display + bebas */}
       <body className={`theme-arcade ${bodyFont.className} ${displayFont.variable} ${bebasFont.variable}`}>
-        <SurfBG />
         {children}
 
-        {/* tiny footer logo linking to okhenn.com */}
         <footer className="site-footer">
           <a href="https://okhenn.com" target="_blank" rel="noopener noreferrer" aria-label="okhenn.com">
             {/* eslint-disable-next-line @next/next/no-img-element */}
