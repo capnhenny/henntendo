@@ -2,6 +2,12 @@
 "use client";
 import { useEffect, useState } from "react";
 
+// app/components/SurfBG.tsx
+export default function SurfBG() {
+  // Minimal placeholder to satisfy the import; background CSS still works.
+  return <div className="surf-bg" aria-hidden="true" />;
+}
+
 export default function SurfBG() {
   const [tiles, setTiles] = useState(0);
 
