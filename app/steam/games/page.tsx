@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 // app/steam/games/page.tsx
 import GameIcon from "../../components/GameIcon";
 import GameThumb from "../../components/GameThumb";
@@ -26,11 +28,47 @@ export default async function GamesPage({
   </div>
   <div className="subtle">Hardcoded test (appid 570 = Dota 2)</div>
 </div>
-  
+
+  // drop this near the top, inside the component but before any early returns
+const DebugBanner = () => (
+  <div className="card" style={{
+    marginBottom: 12,
+    padding: 12,
+    border: "2px dashed #fbbf24",
+    background: "rgba(251,191,36,0.08)"
+  }}>
+    <div style={{ display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
+      <strong>DEBUG: Dota 2 hardcoded</strong>
+      <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+        <GameIcon appid={570} alt="Dota 2 icon" />
+        {/* Force show the wide thumb even on mobile */}
+        <img
+          src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg"
+          alt="Dota 2 header"
+          style={{
+            width: 200,
+            aspectRatio: "16 / 9",
+            objectFit: "cover",
+            borderRadius: 10,
+            border: "1px solid rgba(255,255,255,0.12)",
+            display: "block"
+          }}
+        />
+      </div>
+    </div>
+    <div className="subtle">If this banner is visible, you’re on the correct page and CSS isn’t hiding the image.</div>
+  </div>
+);
+
   if (!steamid) {
     return (
       <div className="container section">
         <h2 className="section-title">Games</h2>
+      return (
+  <div className="container section">
+    <h2 className="section-title">Games</h2>
+    <DebugBanner />  {/* ← should always be visible */}
+    {/* …rest of your list… */}
         <p className="subtle">
           Set <code>STEAM_DEFAULT_ID</code> or pass <code>?steamid=…</code>.
         </p>
