@@ -13,7 +13,7 @@ type Game = {
 
 const toHrs = (m: number) => (m / 60).toFixed(1);
 
-// Unmissable banner with a hardcoded Dota 2 image (proves images load)
+// Always-visible banner with a hardcoded Dota 2 image (proves images load)
 function DebugBanner() {
   return (
     <div
@@ -29,7 +29,6 @@ function DebugBanner() {
         <strong>DEBUG: Dota 2 hardcoded</strong>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <GameIcon appid={570} alt="Dota 2 icon" />
-          {/* Force show a plain <img> so no CSS can hide it */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg"
