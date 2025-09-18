@@ -40,6 +40,16 @@ export default async function GamesPage({
   return (
     <div className="container section">
       <h2 className="section-title">Games</h2>
+
+{/* TEMP TEST: remove after verifying */}
+<div className="card" style={{ marginBottom: 12 }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <GameIcon appid={570} alt="Dota 2 icon" />
+    <GameThumb appid={570} alt="Dota 2 header" />
+  </div>
+  <div className="subtle">Hardcoded test (appid 570 = Dota 2)</div>
+</div>
+      
       <ul className="games-list">
         {sorted.map((g) => (
           <li key={g.appid} className="game-item">
