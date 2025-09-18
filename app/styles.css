@@ -17,7 +17,7 @@
   /* Fonts (from layout.tsx next/font variables) */
   /* --font-display = Oxanium, --font-bebas = Bebas Neue */
   /* Use Bebas Neue for game titles */
-  --game-title-font: "Bebas Neue", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --game-title-font: var(--font-bebas), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 
   /* Surfer tiling (2x bigger) */
   --surf-size: clamp(144px, 20vw, 320px);
