@@ -22,4 +22,33 @@ export default function GameIcon({
   const sources = useMemo(() => {
     const s: string[] = [
       `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appid}/header.jpg`,
-      `https://cdn.akamai.steamstatic.com
+      `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/header.jpg`,
+      `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appid}/capsule_184x69.jpg`,
+      `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/capsule_184x69.jpg`,
+      `https://shared.cloudflare.steamstatic.com/steam/apps/${appid}/library_600x900.jpg`,
+      `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/library_600x900.jpg`,
+    ];
+    if (iconHash) {
+      s.push(
+        `https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/${appid}/${iconHash}.jpg`,
+        `https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/${appid}/${iconHash}.jpg`,
+      );
+    }
+    return s;
+  }, [appid, iconHash]);
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={sources[i]}
+      width={size}
+      height={size}
+      alt={alt}
+      className={`game-icon ${className}`}
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
+      onError={() => setI((x) => (x + 1 < sources.length ? x + 1 : x))}
+    />
+  );
+}
