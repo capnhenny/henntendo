@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 
 type Props = {
   appid: number | string;
-  iconHash?: string;           // from your API: img_icon_url
+  iconHash?: string;   // from your API: img_icon_url (optional)
   size?: number;
   className?: string;
   alt?: string;
@@ -18,23 +18,25 @@ export default function GameIcon({
 }: Props) {
   const [i, setI] = useState(0);
 
-  // More robust: header -> capsule -> library -> legacy community (needs hash)
+  // Canonical hosts + many fallbacks:
+  // 1) store header (wide) → 2) store capsule → 3) library portrait → 4) legacy community (needs hash)
   const sources = useMemo(() => {
-    const s: string[] = [
-      `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appid}/header.jpg`,
-      `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/header.jpg`,
-      `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appid}/capsule_184x69.jpg`,
-      `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/capsule_184x69.jpg`,
-      `https://shared.cloudflare.steamstatic.com/steam/apps/${appid}/library_600x900.jpg`,
-      `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/library_600x900.jpg`,
+    const S = String(appid);
+    const list: string[] = [
+      `https://cdn.cloudflare.steamstatic.com/steam/apps/${S}/header.jpg`,
+      `https://steamcdn-a.akamaihd.net/steam/apps/${S}/header.jpg`,
+      `https://cdn.cloudflare.steamstatic.com/steam/apps/${S}/capsule_231x87.jpg`,
+      `https://steamcdn-a.akamaihd.net/steam/apps/${S}/capsule_231x87.jpg`,
+      `https://cdn.cloudflare.steamstatic.com/steam/apps/${S}/library_600x900.jpg`,
+      `https://steamcdn-a.akamaihd.net/steam/apps/${S}/library_600x900.jpg`,
     ];
     if (iconHash) {
-      s.push(
-        `https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/${appid}/${iconHash}.jpg`,
-        `https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/${appid}/${iconHash}.jpg`,
+      list.push(
+        `https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/${S}/${iconHash}.jpg`,
+        `https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/${S}/${iconHash}.jpg`
       );
     }
-    return s;
+    return list;
   }, [appid, iconHash]);
 
   return (
@@ -47,7 +49,6 @@ export default function GameIcon({
       className={`game-icon ${className}`}
       loading="lazy"
       decoding="async"
-      referrerPolicy="no-referrer"
       onError={() => setI((x) => (x + 1 < sources.length ? x + 1 : x))}
     />
   );
