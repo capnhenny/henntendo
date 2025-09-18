@@ -1,6 +1,6 @@
 // app/debug/steam-images/page.tsx
-import GameIcon from "@/app/components/GameIcon";
-import GameThumb from "@/app/components/GameThumb";
+import GameIcon from "../../components/GameIcon";
+import GameThumb from "../../components/GameThumb";
 
 export const dynamic = "force-dynamic"; // bypass static caching for this debug route
 
