@@ -204,3 +204,18 @@ export default function Page() {
     </main>
   );
 }
+
+<style jsx global>{`
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+  /* force Bebas for game titles anywhere we list games */
+  .games-list .game-name,
+  .games-list .title-font,
+  .games-list .game-title > *:first-child,
+  .games-list .game-item h3,
+  .games-list .game-item .name {
+    font-family: "Bebas Neue", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+    font-weight: 400;
+    letter-spacing: .25px;
+    line-height: 1.05;
+  }
+`}</style>
