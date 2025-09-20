@@ -24,7 +24,7 @@ export default function Page() {
     if (profilesMatch) return profilesMatch[1];
 
     const vanityUrlMatch = trimmed.match(/steamcommunity\.com\/id\/([^\/?#]+)/i);
-    const candidate = vanityUrlMatch ? vanityUrlMatch[1] : trimmed;
+    const candidate = vanityUrlMatch ? trimmed.match(/steamcommunity\.com\/id\/([^\/?#]+)/i)![1] : trimmed;
 
     if (/^\d{17}$/.test(candidate)) return candidate;
 
@@ -83,7 +83,6 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // helper for badge display name (use game name when we have it)
   const gameNameById = new Map(games.map((g) => [g.appid, g.name]));
   const badgeLabel = (b: Badge) =>
     gameNameById.get(b.appid ?? -1) ?? (b.appid ? `App ${b.appid}` : `Badge ${b.badgeid}`);
@@ -102,9 +101,7 @@ export default function Page() {
             placeholder="Steam vanity / SteamID64 / profile URL"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") loadAll();
-            }}
+            onKeyDown={(e) => { if (e.key === "Enter") loadAll(); }}
           />
           <button className="button" onClick={loadAll} disabled={loading}>
             {loading ? "Loading..." : "Show"}
@@ -132,9 +129,7 @@ export default function Page() {
         </section>
       )}
 
-      {/* ===== Two-column: Top 10 (left) + Badges (right) ===== */}
       <section className="grid-2 section">
-        {/* Top 10 */}
         <div className="panel">
           <h2 className="section-title title-font" style={{ fontSize: 16 }}>
             Top 10 Games (all-time playtime)
@@ -159,7 +154,6 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Badges (replaces Recently Played) */}
         <div className="panel" id="badges">
           <h2 className="section-title title-font" style={{ fontSize: 16 }}>
             Badges
@@ -173,8 +167,7 @@ export default function Page() {
                   <div className="badge-meta">
                     <div className="badge-name">{badgeLabel(b)}</div>
                     <div className="badge-note">
-                      Level {b.level ?? 0}
-                      {typeof b.completed === "number" ? ` · ${b.completed} completed` : ""}
+                      Level {b.level ?? 0}{typeof b.completed === "number" ? ` · ${b.completed} completed` : ""}
                     </div>
                   </div>
                 </li>
@@ -204,18 +197,3 @@ export default function Page() {
     </main>
   );
 }
-
-<style jsx global>{`
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-  /* force Bebas for game titles anywhere we list games */
-  .games-list .game-name,
-  .games-list .title-font,
-  .games-list .game-title > *:first-child,
-  .games-list .game-item h3,
-  .games-list .game-item .name {
-    font-family: "Bebas Neue", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
-    font-weight: 400;
-    letter-spacing: .25px;
-    line-height: 1.05;
-  }
-`}</style>
