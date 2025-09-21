@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import { useEffect, useState } from "react";
+import { Bebas_Neue } from "next/font/google";              // ← add
+const bebasTitle = Bebas_Neue({ subsets: ["latin"], weight: "400" }); // ← add
+
 type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
 type Game  = { appid: number; name: string; playtime_forever?: number; img_icon_url?: string };
 
@@ -129,6 +133,9 @@ export default function Page() {
         </section>
       )}
 
+// app/page.tsx
+"use client";
+
       <section className="grid-2 section">
         <div className="panel">
           <h2 className="section-title title-font" style={{ fontSize: 16 }}>
@@ -141,13 +148,20 @@ export default function Page() {
               return (
                 <div key={g.appid} className="card game-item">
                   <div className="game-title">
-                    <span className="game-name">{g.name}</span>
+                    {/* 👇 force Bebas on the element */}
+                    <span className={`${bebasTitle.className} game-name`}>{g.name}</span>
                     <span className="game-meta">{hrsAll} hrs total</span>
                   </div>
                   <button className="button" onClick={() => loadAchievements(g.appid)}>
                     See achievements
                   </button>
                 </div>
+              );
+            })}
+            {!games.length && <div className="subtle">No public games.</div>}
+          </div>
+        </div>
+
               );
             })}
             {!games.length && <div className="subtle">No public games.</div>}
