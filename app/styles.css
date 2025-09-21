@@ -152,7 +152,6 @@ body.theme-arcade::before{
 
 /* Bebas Neue on game names — single source of truth */
 .game-name{
-  font-family: var(--game-title-font) !important;
   font-size:24px;
   font-weight:400;
   letter-spacing:.5px;
