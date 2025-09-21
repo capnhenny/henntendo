@@ -151,7 +151,9 @@ body.theme-arcade::before{
 .game-title{ display:flex; flex-direction:column; line-height:1.1 }
 
 /* Bebas Neue on game names — single source of truth */
-.game-name{
+/* Final override: force Bebas on game titles */
+.games-list .game-name{
+  font-family: var(--game-title-font) !important;
   font-size:24px;
   font-weight:400;
   letter-spacing:.5px;
