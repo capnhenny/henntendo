@@ -253,22 +253,3 @@ body.theme-arcade::before{ z-index:0 }
   .dashboard{ grid-template-columns:1fr }
   .grid-2{ grid-template-columns:1fr }
 }
-/* ---- FONT: apply Bebas to game titles ---- */
-.games-list .game-name{
-  font-family: var(--game-title-font) !important;
-}
-
-/* safety: if the first child is the title element in some rows */
-.game-item .game-title > :first-child{
-  font-family: var(--game-title-font) !important;
-}
-
-/* ---- FONT: apply Bebas to game titles ---- */
-.games-list .game-name{
-  font-family: var(--game-title-font) !important;
-}
-
-/* safety: if the first child is the title element in some rows */
-.game-item .game-title > :first-child{
-  font-family: var(--game-title-font) !important;
-}
