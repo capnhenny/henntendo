@@ -29,9 +29,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
         </footer>
       </body>
-      
-      <body className={`theme-arcade ${bodyFont.className} ${displayFont.variable} ${bebasFont.variable}`}>
-
     </html>
   );
 }
