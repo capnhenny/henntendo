@@ -147,11 +147,12 @@ export default function Page() {
               const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
               return (
                 <div key={g.appid} className="card game-item">
-                  <div className="game-title">
-                    {/* 👇 force Bebas on the element */}
-                    <span className={`${bebasTitle.className} game-name`}>{g.name}</span>
-                    <span className="game-meta">{hrsAll} hrs total</span>
-                  </div>
+<div className="game-title">
+  <span className="game-name">
+    <span className={bebasTitle.className}>{g.name}</span>
+  </span>
+  <span className="game-meta">{hrsAll} hrs total</span>
+</div>
                   <button className="button" onClick={() => loadAchievements(g.appid)}>
                     See achievements
                   </button>
