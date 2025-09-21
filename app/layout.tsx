@@ -5,8 +5,6 @@ import "./styles.css";
 import { VT323, Oxanium, Bebas_Neue } from "next/font/google";
 import SurfBG from "./components/SurfBG";
 
-<body className={`theme-arcade ${bodyFont.className} ${displayFont.variable} ${bebasFont.variable}`}>
-
 const bodyFont    = VT323({ subsets: ["latin"], weight: "400" });
 const displayFont = Oxanium({ subsets: ["latin"], weight: ["400","700"], variable: "--font-display" });
 const bebasFont   = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-bebas" });
@@ -31,6 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
         </footer>
       </body>
+      
+      <body className={`theme-arcade ${bodyFont.className} ${displayFont.variable} ${bebasFont.variable}`}>
+
     </html>
   );
 }
