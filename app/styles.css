@@ -17,7 +17,7 @@
 
   /* Fonts (from layout.tsx next/font variables)
      --font-display = Oxanium, --font-bebas = Bebas Neue */
-  --game-title-font: var(--font-bebas), "Bebas Neue",
+  --game-title-font: var(--font-bebas, "Bebas Neue"),
                      ui-sans-serif, system-ui, -apple-system,
                      "Segoe UI", Roboto, Arial, sans-serif;
 
