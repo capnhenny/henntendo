@@ -223,8 +223,8 @@ a:hover{ text-decoration:underline }
   width:var(--surf-size);
   height:var(--surf-size);
   display:grid; place-items:center;
-  /* each tile gets its own starting angle */
-  transform: rotate(var(--start, 0deg));
+  /* remove the CSS-var transform if you’re setting it inline in TSX */
+  /* transform: rotate(var(--start, 0deg)); */
 }
 
 .surfer{
@@ -234,6 +234,10 @@ a:hover{ text-decoration:underline }
   animation-name: spinSmooth;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  /* give it a default so it always spins */
+  animation-duration: 24s;
+  /* allow per-tile overrides from inline style */
+  will-change: transform;
 }
 
 /* continuous, not stepped */
@@ -242,7 +246,6 @@ a:hover{ text-decoration:underline }
   to   { transform: rotate(360deg); }
 }
 
-/* reduce motion: stop spinning but keep randomized starting angles */
 @media (prefers-reduced-motion: reduce){
   .surfer{ animation: none !important; }
 }
