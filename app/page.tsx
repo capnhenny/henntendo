@@ -223,26 +223,25 @@ export default function Page() {
 
           {ownedFiltered.length ? (
             <>
-              <ul className="owned-grid">
-                {ownedVisible.map((g) => (
-                  <li key={g.appid} className="owned-card">
-                    {/* big square thumbnail (cropped header) */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
-                      alt={`${g.name} art`}
-                      className="owned-icon"
-                      width={256}
-                      height={256}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <span className="game-name owned-name" title={g.name}>
-                      {g.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+<ul className="owned-grid">
+  {ownedVisible.map((g) => (
+    <li key={g.appid} className="owned-card">
+      {/* full-bleed image */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
+        alt={`${g.name} art`}
+        className="owned-bg"
+        loading="lazy"
+        decoding="async"
+      />
+      {/* title overlay */}
+      <span className="game-name owned-name" title={g.name}>
+        {g.name}
+      </span>
+    </li>
+  ))}
+</ul>
 
               {ownedFiltered.length > ownedVisible.length && (
                 <button
@@ -277,44 +276,50 @@ export default function Page() {
       )}
 
       {/* Owned grid styles (scoped) */}
-      <style jsx>{`
-        .owned-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-          gap: 12px;
-          margin-top: 12px;
-        }
-        .owned-card {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          padding: 10px;
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 14px;
-          background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
-          backdrop-filter: blur(3px);
-        }
-        .owned-icon {
-          width: 100%;
-          aspect-ratio: 1 / 1;
-          object-fit: cover;
-          border-radius: 10px;
-          border: 1px solid var(--border);
-          background: #000;
-          box-shadow: 0 1px 2px rgba(0,0,0,.12);
-        }
-        .owned-name {
-          display: block;
-          width: 100%;
-          text-align: center;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          line-height: 1.05;
-          letter-spacing: .25px;
-        }
-      `}</style>
+<style jsx>{`
+  .owned-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  /* Square tile */
+  .owned-card {
+    position: relative;
+    aspect-ratio: 1 / 1;                  /* ← keeps the whole tile square */
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 1px 2px rgba(0,0,0,.12);
+  }
+
+  /* Image fills the square */
+  .owned-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Title band inside the square */
+  .owned-name {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 6px 8px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    /* subtle readable band */
+    background: linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0.0) 70%);
+  }
+`}</style>
 
       {/* Bebas override (works site-wide) */}
       <style jsx global>{`
