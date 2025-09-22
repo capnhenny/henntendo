@@ -235,7 +235,7 @@ a:hover{ text-decoration:underline }
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   /* give it a default so it always spins */
-  animation-duration: 24s;
+  animation-duration: 12s;
   /* allow per-tile overrides from inline style */
   will-change: transform;
 }
