@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
-type Game  = { appid: number; name: string; playtime_forever?: number; img_icon_url?: string };
+type Game = {
+  appid: number;
+  name: string;
+  playtime_forever?: number;
+  img_icon_url?: string;
+};
 
 const DEFAULT_INPUT = "laserhenn";
 
@@ -12,11 +16,19 @@ export default function Page() {
   const [steamid, setSteamid] = useState("");
   const [profile, setProfile] = useState<any>(null);
   const [level, setLevel] = useState<number | null>(null);
-  const [badges, setBadges] = useState<Badge[]>([]);
+
+  // NEW: full library for Owned Games
+  const [allGames, setAllGames] = useState<Game[]>([]);
+  // Existing: Top 10 list
   const [games, setGames] = useState<Game[]>([]);
+
   const [achievements, setAchievements] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
+  // Owned Games filter/pagination
+  const [ownedQuery, setOwnedQuery] = useState("");
+  const [ownedLimit, setOwnedLimit] = useState(24); // show first 24, load more by 24
 
   async function resolveIfNeeded(value: string) {
     const trimmed = value.trim();
@@ -45,24 +57,28 @@ export default function Page() {
 
       const [p, l, g]: [
         any,
-        { level?: number; badges?: Badge[] },
+        { level?: number },
         { games?: Game[] }
       ] = await Promise.all([
-        fetch(`/api/steam/profile?steamid=${id}`).then(r => r.json()),
-        fetch(`/api/steam/level?steamid=${id}`).then(r => r.json()),
-        fetch(`/api/steam/games?steamid=${id}`).then(r => r.json()),
+        fetch(`/api/steam/profile?steamid=${id}`).then((r) => r.json()),
+        fetch(`/api/steam/level?steamid=${id}`).then((r) => r.json()),
+        fetch(`/api/steam/games?steamid=${id}`).then((r) => r.json()),
       ]);
 
       setProfile(p);
       setLevel(l.level ?? null);
-      setBadges(l.badges ?? []);
 
-      const top10: Game[] = (g.games ?? [])
+      const all: Game[] = (g.games ?? []) as Game[];
+      setAllGames(all);
+
+      const top10: Game[] = all
         .slice()
         .sort((a: Game, b: Game) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
         .slice(0, 10);
 
       setGames(top10);
+      setOwnedLimit(24); // reset pagination on new load
+      setOwnedQuery(""); // reset filter
     } catch (e: any) {
       setErr(e.message || "Something went wrong");
     } finally {
@@ -88,9 +104,13 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const gameNameById = new Map(games.map((g) => [g.appid, g.name]));
-  const badgeLabel = (b: Badge) =>
-    gameNameById.get(b.appid ?? -1) ?? (b.appid ? `App ${b.appid}` : `Badge ${b.badgeid}`);
+  const toHrs = (m?: number) => Math.round((m ?? 0) / 60);
+
+  // Owned Games filter + slice
+  const ownedFiltered = allGames.filter((g) =>
+    g.name.toLowerCase().includes(ownedQuery.toLowerCase())
+  );
+  const ownedVisible = ownedFiltered.slice(0, ownedLimit);
 
   return (
     <main className="container">
@@ -134,21 +154,44 @@ export default function Page() {
         </section>
       )}
 
-      {/* Top 10 + Badges */}
+      {/* ===== Two-column: Top 10 (left) + Owned Games (right) ===== */}
       <section className="grid-2 section">
+        {/* Top 10 */}
         <div className="panel">
           <h2 className="section-title title-font" style={{ fontSize: 16 }}>
             Top 10 Games (all-time playtime)
           </h2>
+
           <div className="games-list">
             {games.map((g) => {
-              const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
+              const hrsAll = toHrs(g.playtime_forever);
               return (
                 <div key={g.appid} className="card game-item">
-                  <div className="game-title">
-                    <span className="game-name">{g.name}</span>
-                    <span className="game-meta">{hrsAll} hrs total</span>
+                  <div className="game-main">
+                    {/* left square = cropped header */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
+                      alt={`${g.name} icon`}
+                      width={36}
+                      height={36}
+                      className="game-icon"
+                      style={{ objectFit: "cover" }}
+                    />
+                    <div className="game-title">
+                      <span className="game-name">{g.name}</span>
+                      <span className="game-meta">{hrsAll} hrs total</span>
+                    </div>
                   </div>
+
+                    {/* right wide header */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
+                      alt={`${g.name} header`}
+                      className="game-thumb"
+                    />
+
                   <button className="button" onClick={() => loadAchievements(g.appid)}>
                     See achievements
                   </button>
@@ -159,27 +202,70 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="panel" id="badges">
+        {/* Owned Games (replaces Badges) */}
+        <div className="panel" id="owned">
           <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-            Badges
+            Owned Games ({ownedFiltered.length})
           </h2>
-          {badges.length ? (
-            <ul className="badges-grid">
-              {badges.map((b) => (
-                <li key={`${b.badgeid}-${b.appid ?? "na"}`} className="badge">
-                  <div className="badge-icon">🏅</div>
-                  <div className="badge-meta">
-                    <div className="badge-name">{badgeLabel(b)}</div>
-                    <div className="badge-note">
-                      Level {b.level ?? 0}
-                      {typeof b.completed === "number" ? ` · ${b.completed} completed` : ""}
+
+          <div className="controls" style={{ marginTop: 8 }}>
+            <input
+              className="input"
+              placeholder="Filter owned games…"
+              value={ownedQuery}
+              onChange={(e) => {
+                setOwnedQuery(e.target.value);
+                setOwnedLimit(24); // reset paging when filtering
+              }}
+            />
+          </div>
+
+          {ownedFiltered.length ? (
+            <div className="games-list">
+              {ownedVisible.map((g) => {
+                const hrsAll = toHrs(g.playtime_forever);
+                return (
+                  <div key={g.appid} className="card game-item">
+                    <div className="game-main">
+                      {/* left square = cropped header */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
+                        alt={`${g.name} icon`}
+                        width={36}
+                        height={36}
+                        className="game-icon"
+                        style={{ objectFit: "cover" }}
+                      />
+                      <div className="game-title">
+                        <span className="game-name">{g.name}</span>
+                        <span className="game-meta">{hrsAll} hrs total</span>
+                      </div>
                     </div>
+
+                    {/* right wide header */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
+                      alt={`${g.name} header`}
+                      className="game-thumb"
+                    />
                   </div>
-                </li>
-              ))}
-            </ul>
+                );
+              })}
+
+              {ownedFiltered.length > ownedVisible.length && (
+                <button
+                  className="button"
+                  onClick={() => setOwnedLimit((n) => n + 24)}
+                  style={{ alignSelf: "center" }}
+                >
+                  Load more
+                </button>
+              )}
+            </div>
           ) : (
-            <div className="subtle">No public badges.</div>
+            <div className="subtle">No owned games (or none matched your filter).</div>
           )}
         </div>
       </section>
@@ -200,7 +286,7 @@ export default function Page() {
         </section>
       )}
 
-      {/* ===== FONT OVERRIDE (Option A) — must live INSIDE the return ===== */}
+      {/* ===== FONT OVERRIDE (Option A) — keep this as-is since it fixed Bebas ===== */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
         .games-list .game-name,
