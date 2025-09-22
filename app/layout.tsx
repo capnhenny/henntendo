@@ -8,6 +8,7 @@ import SurfBG from "./components/SurfBG";
 const bodyFont    = VT323({ subsets: ["latin"], weight: "400" });
 const displayFont = Oxanium({ subsets: ["latin"], weight: ["400","700"], variable: "--font-display" });
 const bebasFont   = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-bebas" });
+const pressFont   = Press_Start_2P({ subsets: ["latin"], weight: "400", variable: "--font-press" });
 
 export const metadata: Metadata = {
   title: "Henntendo",
