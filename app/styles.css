@@ -208,9 +208,9 @@ ul{ list-style:none; padding-left:0; margin:0 }
 a{ color:var(--accent-2); text-decoration:none }
 a:hover{ text-decoration:underline }
 
-/* Surfer background (tiled, 45° ticks every 3s) */
+/* Surfer background (tiled, smooth continuous spin) */
 .surf-bg{
-  position: fixed; inset: 0; z-index:1; pointer-events:none;
+  position: fixed; inset: 0; z-index:2; pointer-events:none;
   display: grid;
   grid-template-columns: repeat(var(--surf-cols), var(--surf-size));
   grid-auto-rows: var(--surf-size);
@@ -218,23 +218,33 @@ a:hover{ text-decoration:underline }
   justify-content:center; align-content:start;
   opacity:.18; filter: saturate(.9) contrast(1.05);
 }
-.surf{ width:var(--surf-size); height:var(--surf-size); display:grid; place-items:center }
-.surf > img{
+
+.surf{
+  width:var(--surf-size);
+  height:var(--surf-size);
+  display:grid; place-items:center;
+  /* each tile gets its own starting angle */
+  transform: rotate(var(--start, 0deg));
+}
+
+.surfer{
   width:100%; height:auto;
   image-rendering:-moz-crisp-edges; image-rendering:pixelated;
-  transform-origin:50% 50%; animation: spinSteps 24s steps(8,end) infinite;
+  transform-origin:50% 50%;
+  animation-name: spinSmooth;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
-@keyframes spinSteps{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
-.surf:nth-child(8n+1) > img { animation-delay: 0s }
-.surf:nth-child(8n+2) > img { animation-delay: 3s }
-.surf:nth-child(8n+3) > img { animation-delay: 6s }
-.surf:nth-child(8n+4) > img { animation-delay: 9s }
-.surf:nth-child(8n+5) > img { animation-delay: 12s }
-.surf:nth-child(8n+6) > img { animation-delay: 15s }
-.surf:nth-child(8n+7) > img { animation-delay: 18s }
-.surf:nth-child(8n+8) > img { animation-delay: 21s }
+
+/* continuous, not stepped */
+@keyframes spinSmooth {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* reduce motion: stop spinning but keep randomized starting angles */
 @media (prefers-reduced-motion: reduce){
-  .surf > img{ animation:none !important }
+  .surfer{ animation: none !important; }
 }
 
 /* Footer logo */
