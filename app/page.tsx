@@ -17,10 +17,10 @@ export default function Page() {
   const [profile, setProfile] = useState<any>(null);
   const [level, setLevel] = useState<number | null>(null);
 
-  // NEW: full library for Owned Games
-  const [allGames, setAllGames] = useState<Game[]>([]);
-  // Existing: Top 10 list
+  // Top 10
   const [games, setGames] = useState<Game[]>([]);
+  // Full library for Owned Games
+  const [allGames, setAllGames] = useState<Game[]>([]);
 
   const [achievements, setAchievements] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function Page() {
 
   // Owned Games filter/pagination
   const [ownedQuery, setOwnedQuery] = useState("");
-  const [ownedLimit, setOwnedLimit] = useState(24); // show first 24, load more by 24
+  const [ownedLimit, setOwnedLimit] = useState(24);
 
   async function resolveIfNeeded(value: string) {
     const trimmed = value.trim();
@@ -75,10 +75,11 @@ export default function Page() {
         .slice()
         .sort((a: Game, b: Game) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
         .slice(0, 10);
-
       setGames(top10);
-      setOwnedLimit(24); // reset pagination on new load
-      setOwnedQuery(""); // reset filter
+
+      // reset owned view on fresh load
+      setOwnedLimit(24);
+      setOwnedQuery("");
     } catch (e: any) {
       setErr(e.message || "Something went wrong");
     } finally {
@@ -184,13 +185,13 @@ export default function Page() {
                     </div>
                   </div>
 
-                    {/* right wide header */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
-                      alt={`${g.name} header`}
-                      className="game-thumb"
-                    />
+                  {/* right wide header */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
+                    alt={`${g.name} header`}
+                    className="game-thumb"
+                  />
 
                   <button className="button" onClick={() => loadAchievements(g.appid)}>
                     See achievements
@@ -202,81 +203,57 @@ export default function Page() {
           </div>
         </div>
 
-{/* Owned Games (grid) */}
-<div className="panel" id="owned">
-  <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-    Owned Games ({ownedFiltered.length})
-  </h2>
+        {/* Owned Games (grid) */}
+        <div className="panel" id="owned">
+          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+            Owned Games ({ownedFiltered.length})
+          </h2>
 
-  <div className="controls" style={{ marginTop: 8 }}>
-    <input
-      className="input"
-      placeholder="Filter owned games…"
-      value={ownedQuery}
-      onChange={(e) => {
-        setOwnedQuery(e.target.value);
-        setOwnedLimit(24); // reset paging when filtering
-      }}
-    />
-  </div>
-
-  {ownedFiltered.length ? (
-    <>
-      <ul className="owned-grid">
-        {ownedVisible.map((g) => (
-          <li key={g.appid} className="owned-card">
-            {/* big square thumbnail (cropped header) */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
-              alt={`${g.name} art`}
-              className="owned-icon"
-              width={256}
-              height={256}
-              loading="lazy"
-              decoding="async"
+          <div className="controls" style={{ marginTop: 8 }}>
+            <input
+              className="input"
+              placeholder="Filter owned games…"
+              value={ownedQuery}
+              onChange={(e) => {
+                setOwnedQuery(e.target.value);
+                setOwnedLimit(24); // reset paging when filtering
+              }}
             />
-            <span className="game-name owned-name" title={g.name}>{g.name}</span>
-          </li>
-        ))}
-      </ul>
+          </div>
 
-      {ownedFiltered.length > ownedVisible.length && (
-        <button
-          className="button"
-          onClick={() => setOwnedLimit((n) => n + 24)}
-          style={{ alignSelf: "center", marginTop: 12 }}
-        >
-          Load more
-        </button>
-      )}
-    </>
-  ) : (
-    <div className="subtle">No owned games (or none matched your filter).</div>
-  )}
-</div>
-
-                    {/* right wide header */}
+          {ownedFiltered.length ? (
+            <>
+              <ul className="owned-grid">
+                {ownedVisible.map((g) => (
+                  <li key={g.appid} className="owned-card">
+                    {/* big square thumbnail (cropped header) */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
-                      alt={`${g.name} header`}
-                      className="game-thumb"
+                      alt={`${g.name} art`}
+                      className="owned-icon"
+                      width={256}
+                      height={256}
+                      loading="lazy"
+                      decoding="async"
                     />
-                  </div>
-                );
-              })}
+                    <span className="game-name owned-name" title={g.name}>
+                      {g.name}
+                    </span>
+                  </li>
+                ))}
+              </ul>
 
               {ownedFiltered.length > ownedVisible.length && (
                 <button
                   className="button"
                   onClick={() => setOwnedLimit((n) => n + 24)}
-                  style={{ alignSelf: "center" }}
+                  style={{ alignSelf: "center", marginTop: 12 }}
                 >
                   Load more
                 </button>
               )}
-            </div>
+            </>
           ) : (
             <div className="subtle">No owned games (or none matched your filter).</div>
           )}
@@ -299,58 +276,58 @@ export default function Page() {
         </section>
       )}
 
-<style jsx>{`
-  .owned-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-    margin-top: 12px;
-  }
-  .owned-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 10px;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-    background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
-    backdrop-filter: blur(3px);
-  }
-  .owned-icon {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: #000;
-    box-shadow: 0 1px 2px rgba(0,0,0,.12);
-  }
-  .owned-name {
-    display: block;
-    width: 100%;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.05;
-    letter-spacing: .25px;
-  }
-`}</style>
+      {/* Owned grid styles (scoped) */}
+      <style jsx>{`
+        .owned-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+          gap: 12px;
+          margin-top: 12px;
+        }
+        .owned-card {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          padding: 10px;
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 14px;
+          background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+          backdrop-filter: blur(3px);
+        }
+        .owned-icon {
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          object-fit: cover;
+          border-radius: 10px;
+          border: 1px solid var(--border);
+          background: #000;
+          box-shadow: 0 1px 2px rgba(0,0,0,.12);
+        }
+        .owned-name {
+          display: block;
+          width: 100%;
+          text-align: center;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-height: 1.05;
+          letter-spacing: .25px;
+        }
+      `}</style>
 
-      {/* ===== FONT OVERRIDE (Option A) — keep this as-is since it fixed Bebas ===== */}
-<style jsx global>{`
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-  .games-list .game-name,
-  .game-item .game-title > :first-child,
-  .owned-grid .game-name {
-    font-family: "Bebas Neue", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
-    font-weight: 400;
-    letter-spacing: .25px;
-    line-height: 1.05;
-  }
-`}</style>
-
+      {/* Bebas override (works site-wide) */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+        .games-list .game-name,
+        .game-item .game-title > :first-child,
+        .owned-grid .game-name {
+          font-family: "Bebas Neue", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+          font-weight: 400;
+          letter-spacing: .25px;
+          line-height: 1.05;
+        }
+      `}</style>
     </main>
   );
 }
