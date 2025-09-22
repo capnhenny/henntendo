@@ -43,29 +43,25 @@ export default function Page() {
       const id = await resolveIfNeeded(input);
       setSteamid(id);
 
-const [p, l, g]: [
-  any,
-  { level?: number; badges?: Badge[] },
-  { games?: Game[] }
-] = await Promise.all([
-  fetch(`/api/steam/profile?steamid=${id}`).then(r => r.json()),
-  fetch(`/api/steam/level?steamid=${id}`).then(r => r.json()),
-  fetch(`/api/steam/games?steamid=${id}`).then(r => r.json()),
-]);
+      const [p, l, g]: [
+        any,
+        { level?: number; badges?: Badge[] },
+        { games?: Game[] }
+      ] = await Promise.all([
+        fetch(`/api/steam/profile?steamid=${id}`).then(r => r.json()),
+        fetch(`/api/steam/level?steamid=${id}`).then(r => r.json()),
+        fetch(`/api/steam/games?steamid=${id}`).then(r => r.json()),
+      ]);
 
       setProfile(p);
       setLevel(l.level ?? null);
       setBadges(l.badges ?? []);
 
-// right after: const [p, l, g] = await Promise.all([...])
-type GamesResponse = { games?: Game[] };
+      const top10: Game[] = (g.games ?? [])
+        .slice()
+        .sort((a: Game, b: Game) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
+        .slice(0, 10);
 
-// <-- give TS a shape
-const top10: Game[] = (gamesResp.games ?? [])     // now typed as Game[]
-  .slice()
-  .sort((a, b) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
-  .slice(0, 10);
-      
       setGames(top10);
     } catch (e: any) {
       setErr(e.message || "Something went wrong");
