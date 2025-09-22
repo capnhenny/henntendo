@@ -272,7 +272,6 @@ body.theme-arcade::before{ z-index:0 }
 
 /* === Force VT323 for meta copy (replacing any Press Start) === */
 .subtle,           /* hero subtitle: “Search by Steam Name…” */
-.profile-name,     /* username block */
 .game-meta {       /* “# hrs total” */
   font-family: 'VT323', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
   font-size: 12px;            /* tweak if you want bigger/smaller */
@@ -291,4 +290,12 @@ body.theme-arcade::before{ z-index:0 }
 .input::placeholder {
   font-family: var(--font-display), system-ui, sans-serif;
   letter-spacing: .2px;
+}
+
+/* Steam display name uses Press Start 2P */
+.profile-name{
+  font-family: var(--font-pressstart), ui-monospace, monospace !important;
+  font-size: 18px;        /* tweak if you want it larger/smaller */
+  font-weight: 400;       /* Press Start 2P only has 400 */
+  letter-spacing: 0.5px;  /* tiny tracking helps readability */
 }
