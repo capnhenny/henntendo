@@ -1,75 +1,61 @@
-"use client";
+// app/components/SurfBG.tsx
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
-type Tile = {
-  start: number;     // initial rotation in deg
-  dur: number;       // seconds per full spin
-  reverse: boolean;  // spin direction
-  delay: number;     // negative delay to de-sync
-};
+type Tile = { id: number; start: number; speed: number; phase: number };
 
 export default function SurfBG() {
-  const [cols, setCols] = useState(1);
-  const [rows, setRows] = useState(1);
+  const [dims, setDims] = useState({ cols: 1, rows: 1 });
 
-  // Read the computed pixel value of --surf-size and calculate grid
   useEffect(() => {
-    const recalc = () => {
-      const root = document.documentElement;
-      const raw = getComputedStyle(root).getPropertyValue("--surf-size").trim();
-      // raw can be like "192px"; fallback to 200 if parsing fails
-      const size = parseFloat(raw) || 200;
+    const compute = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // approximate the CSS: clamp(144px, 20vw, 320px)
+      const size = Math.max(144, Math.min(320, Math.round(w * 0.20)));
+      const cols = Math.max(1, Math.ceil(w / size) + 2);
+      const rows = Math.max(1, Math.ceil(h / size) + 2);
 
-      const c = Math.ceil(window.innerWidth / size) + 2;  // a little overflow
-      const r = Math.ceil(window.innerHeight / size) + 2;
-      setCols(c);
-      setRows(r);
-
-      // Let CSS grid know columns count
-      root.style.setProperty("--surf-cols", String(c));
+      // keep CSS vars in sync for your grid layout
+      document.documentElement.style.setProperty('--surf-size', `${size}px`);
+      document.documentElement.style.setProperty('--surf-cols', String(cols));
+      setDims({ cols, rows });
     };
 
-    recalc();
-    window.addEventListener("resize", recalc);
-    return () => window.removeEventListener("resize", recalc);
+    compute();
+    window.addEventListener('resize', compute);
+    return () => window.removeEventListener('resize', compute);
   }, []);
 
-  // Build tiles with randomized starting orientation & speed
   const tiles = useMemo<Tile[]>(() => {
-    const total = cols * rows;
-    return Array.from({ length: total }, () => {
-      const dur = 18 + Math.random() * 18;      // 18–36s
-      const start = Math.floor(Math.random() * 360); // 0–359°
-      const reverse = Math.random() < 0.5;
-      const delay = -Math.random() * dur;       // start mid-rotation
-      return { start, dur, reverse, delay };
-    });
-  }, [cols, rows]);
+    const total = dims.cols * dims.rows;
+    return Array.from({ length: total }, (_, i) => ({
+      id: i,
+      start: Math.floor(Math.random() * 360), // starting angle
+      speed: 18 + Math.random() * 16,         // 18–34s per rotation
+      phase: -Math.random() * 12,             // negative = desync start
+    }));
+  }, [dims.cols, dims.rows]);
 
   return (
     <div className="surf-bg" aria-hidden="true">
-      {tiles.map((t, i) => (
+      {tiles.map((t) => (
         <div
-          key={i}
+          key={t.id}
           className="surf"
-          style={
-            {
-              // parent sets initial orientation
-              // @ts-expect-error CSS var inline
-              "--start": `${t.start}deg`,
-            } as React.CSSProperties
-          }
+          style={{ transform: `rotate(${t.start}deg)` }} // initial angle
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
+            className="surfer"
             src="/surfer.gif"
             alt=""
-            className="surfer"
+            loading="lazy"
+            decoding="async"
             style={{
-              animationDuration: `${t.dur}s`,
-              animationDelay: `${t.delay}s`,
-              animationDirection: t.reverse ? "reverse" : "normal",
+              animationDuration: `${t.speed}s`,
+              animationDelay: `${t.phase}s`,
             }}
           />
         </div>
