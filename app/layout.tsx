@@ -5,7 +5,7 @@ import "./styles.css";
 import { VT323, Oxanium, Bebas_Neue, Press_Start_2P } from "next/font/google";
 import SurfBG from "./components/SurfBG";
 
-const bodyFont    = VT323({ subsets: ["latin"], weight: "400" });
+const bodyFont = VT323({  subsets: ["latin"],  weight: "400", variable: "--font-body"    });
 const displayFont = Oxanium({ subsets: ["latin"], weight: ["400","700"], variable: "--font-display" });
 const bebasFont   = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-bebas" });
 const pressFont   = Press_Start_2P({ subsets: ["latin"], weight: "400", variable: "--font-press" });
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`theme-arcade ${bodyFont.className} ${displayFont.variable} ${bebasFont.variable} ${pressFont.variable}`}>
+<body className={`theme-arcade ${bodyFont.className} ${bodyFont.variable} ${displayFont.variable} ${bebasFont.variable}`}>
         <SurfBG />
         {children}
         <footer className="site-footer">
