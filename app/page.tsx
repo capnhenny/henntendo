@@ -202,46 +202,59 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Owned Games (replaces Badges) */}
-        <div className="panel" id="owned">
-          <h2 className="section-title title-font" style={{ fontSize: 16 }}>
-            Owned Games ({ownedFiltered.length})
-          </h2>
+{/* Owned Games (grid) */}
+<div className="panel" id="owned">
+  <h2 className="section-title title-font" style={{ fontSize: 16 }}>
+    Owned Games ({ownedFiltered.length})
+  </h2>
 
-          <div className="controls" style={{ marginTop: 8 }}>
-            <input
-              className="input"
-              placeholder="Filter owned games…"
-              value={ownedQuery}
-              onChange={(e) => {
-                setOwnedQuery(e.target.value);
-                setOwnedLimit(24); // reset paging when filtering
-              }}
+  <div className="controls" style={{ marginTop: 8 }}>
+    <input
+      className="input"
+      placeholder="Filter owned games…"
+      value={ownedQuery}
+      onChange={(e) => {
+        setOwnedQuery(e.target.value);
+        setOwnedLimit(24); // reset paging when filtering
+      }}
+    />
+  </div>
+
+  {ownedFiltered.length ? (
+    <>
+      <ul className="owned-grid">
+        {ownedVisible.map((g) => (
+          <li key={g.appid} className="owned-card">
+            {/* big square thumbnail (cropped header) */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
+              alt={`${g.name} art`}
+              className="owned-icon"
+              width={256}
+              height={256}
+              loading="lazy"
+              decoding="async"
             />
-          </div>
+            <span className="game-name owned-name" title={g.name}>{g.name}</span>
+          </li>
+        ))}
+      </ul>
 
-          {ownedFiltered.length ? (
-            <div className="games-list">
-              {ownedVisible.map((g) => {
-                const hrsAll = toHrs(g.playtime_forever);
-                return (
-                  <div key={g.appid} className="card game-item">
-                    <div className="game-main">
-                      {/* left square = cropped header */}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${g.appid}/header.jpg`}
-                        alt={`${g.name} icon`}
-                        width={36}
-                        height={36}
-                        className="game-icon"
-                        style={{ objectFit: "cover" }}
-                      />
-                      <div className="game-title">
-                        <span className="game-name">{g.name}</span>
-                        <span className="game-meta">{hrsAll} hrs total</span>
-                      </div>
-                    </div>
+      {ownedFiltered.length > ownedVisible.length && (
+        <button
+          className="button"
+          onClick={() => setOwnedLimit((n) => n + 24)}
+          style={{ alignSelf: "center", marginTop: 12 }}
+        >
+          Load more
+        </button>
+      )}
+    </>
+  ) : (
+    <div className="subtle">No owned games (or none matched your filter).</div>
+  )}
+</div>
 
                     {/* right wide header */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -286,17 +299,58 @@ export default function Page() {
         </section>
       )}
 
+<style jsx>{`
+  .owned-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .owned-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+    backdrop-filter: blur(3px);
+  }
+  .owned-icon {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #000;
+    box-shadow: 0 1px 2px rgba(0,0,0,.12);
+  }
+  .owned-name {
+    display: block;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.05;
+    letter-spacing: .25px;
+  }
+`}</style>
+
       {/* ===== FONT OVERRIDE (Option A) — keep this as-is since it fixed Bebas ===== */}
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-        .games-list .game-name,
-        .game-item .game-title > :first-child {
-          font-family: "Bebas Neue", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
-          font-weight: 400;
-          letter-spacing: .25px;
-          line-height: 1.05;
-        }
-      `}</style>
+<style jsx global>{`
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+  .games-list .game-name,
+  .game-item .game-title > :first-child,
+  .owned-grid .game-name {
+    font-family: "Bebas Neue", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+    font-weight: 400;
+    letter-spacing: .25px;
+    line-height: 1.05;
+  }
+`}</style>
+
     </main>
   );
 }
