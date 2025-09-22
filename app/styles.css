@@ -295,7 +295,7 @@ body.theme-arcade::before{ z-index:0 }
 /* Steam display name uses Press Start 2P */
 .profile-name{
   font-family: var(--font-pressstart), ui-monospace, monospace !important;
-  font-size: 18px;        /* tweak if you want it larger/smaller */
+  font-size: 32px;        /* tweak if you want it larger/smaller */
   font-weight: 400;       /* Press Start 2P only has 400 */
   letter-spacing: 0.5px;  /* tiny tracking helps readability */
 }
