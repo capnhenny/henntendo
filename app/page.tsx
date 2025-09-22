@@ -2,10 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-import { useEffect, useState } from "react";
-import { Bebas_Neue } from "next/font/google";              // ← add
-const bebasTitle = Bebas_Neue({ subsets: ["latin"], weight: "400" }); // ← add
-
 type Badge = { badgeid: number; level?: number; appid?: number; completed?: number };
 type Game  = { appid: number; name: string; playtime_forever?: number; img_icon_url?: string };
 
@@ -28,7 +24,7 @@ export default function Page() {
     if (profilesMatch) return profilesMatch[1];
 
     const vanityUrlMatch = trimmed.match(/steamcommunity\.com\/id\/([^\/?#]+)/i);
-    const candidate = vanityUrlMatch ? trimmed.match(/steamcommunity\.com\/id\/([^\/?#]+)/i)![1] : trimmed;
+    const candidate = vanityUrlMatch ? vanityUrlMatch[1] : trimmed;
 
     if (/^\d{17}$/.test(candidate)) return candidate;
 
@@ -58,7 +54,7 @@ export default function Page() {
       setBadges(l.badges ?? []);
 
       const top10: Game[] = (g.games ?? [])
-        .sort((a: Game, b: Game) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
+        .sort((a, b) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0))
         .slice(0, 10);
 
       setGames(top10);
@@ -105,7 +101,7 @@ export default function Page() {
             placeholder="Steam vanity / SteamID64 / profile URL"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") loadAll(); }}
+            onKeyDown={(e) => e.key === "Enter" && loadAll()}
           />
           <button className="button" onClick={loadAll} disabled={loading}>
             {loading ? "Loading..." : "Show"}
@@ -133,26 +129,21 @@ export default function Page() {
         </section>
       )}
 
-// app/page.tsx
-"use client";
-
+      {/* Top 10 + Badges */}
       <section className="grid-2 section">
         <div className="panel">
           <h2 className="section-title title-font" style={{ fontSize: 16 }}>
             Top 10 Games (all-time playtime)
           </h2>
-
           <div className="games-list">
             {games.map((g) => {
               const hrsAll = Math.round((g.playtime_forever ?? 0) / 60);
               return (
                 <div key={g.appid} className="card game-item">
-<div className="game-title">
-  <span className="game-name">
-    <span className={bebasTitle.className}>{g.name}</span>
-  </span>
-  <span className="game-meta">{hrsAll} hrs total</span>
-</div>
+                  <div className="game-title">
+                    <span className="game-name">{g.name}</span>
+                    <span className="game-meta">{hrsAll} hrs total</span>
+                  </div>
                   <button className="button" onClick={() => loadAchievements(g.appid)}>
                     See achievements
                   </button>
@@ -163,17 +154,10 @@ export default function Page() {
           </div>
         </div>
 
-              );
-            })}
-            {!games.length && <div className="subtle">No public games.</div>}
-          </div>
-        </div>
-
         <div className="panel" id="badges">
           <h2 className="section-title title-font" style={{ fontSize: 16 }}>
             Badges
           </h2>
-
           {badges.length ? (
             <ul className="badges-grid">
               {badges.map((b) => (
@@ -182,7 +166,8 @@ export default function Page() {
                   <div className="badge-meta">
                     <div className="badge-name">{badgeLabel(b)}</div>
                     <div className="badge-note">
-                      Level {b.level ?? 0}{typeof b.completed === "number" ? ` · ${b.completed} completed` : ""}
+                      Level {b.level ?? 0}
+                      {typeof b.completed === "number" ? ` · ${b.completed} completed` : ""}
                     </div>
                   </div>
                 </li>
@@ -209,6 +194,18 @@ export default function Page() {
           </ul>
         </section>
       )}
+
+      {/* ===== FONT OVERRIDE (Option A) — must live INSIDE the return ===== */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+        .games-list .game-name,
+        .game-item .game-title > :first-child {
+          font-family: "Bebas Neue", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+          font-weight: 400;
+          letter-spacing: .25px;
+          line-height: 1.05;
+        }
+      `}</style>
     </main>
   );
 }
