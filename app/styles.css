@@ -253,3 +253,21 @@ body.theme-arcade::before{ z-index:0 }
   .dashboard{ grid-template-columns:1fr }
   .grid-2{ grid-template-columns:1fr }
 }
+
+/* === Pixel UI font (Press Start 2P) — targeted use === */
+/* next/font exposes it as --font-press via layout.tsx */
+.hero .subtle,           /* the "Search by Steam Name..." line */
+.profile-name,           /* username block */
+.games-list .game-meta   /* "## hrs total" */
+{
+  font-family: var(--font-press), "Press Start 2P",
+               ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", "Courier New", monospace !important;
+  font-weight: 400;     /* 2P has a single weight */
+  letter-spacing: .6px; /* pixel fonts like a bit more tracking */
+  line-height: 1.3;
+}
+
+/* Optional sizing tweaks for readability with 2P */
+.profile-name { font-size: 20px; line-height: 1.25; }
+.games-list .game-meta { font-size: 0.9rem; text-transform: uppercase; }
