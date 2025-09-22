@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import "./styles.css";
 
-import { VT323, Oxanium, Bebas_Neue } from "next/font/google";
+import { VT323, Oxanium, Bebas_Neue, Press_Start_2P } from "next/font/google";
 import SurfBG from "./components/SurfBG";
 
 const bodyFont    = VT323({ subsets: ["latin"], weight: "400" });
@@ -18,11 +18,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      {/* Body gets the font classes/variables */}
-      <body className={`theme-arcade ${bodyFont.className} ${displayFont.variable} ${bebasFont.variable}`}>
+      <body className={`theme-arcade ${bodyFont.className} ${displayFont.variable} ${bebasFont.variable} ${pressFont.variable}`}>
         <SurfBG />
         {children}
-
         <footer className="site-footer">
           <a href="https://okhenn.com" target="_blank" rel="noopener noreferrer" aria-label="okhenn.com">
             {/* eslint-disable-next-line @next/next/no-img-element */}
